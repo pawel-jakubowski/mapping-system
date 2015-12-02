@@ -1,0 +1,24 @@
+@startuml
+start
+
+:init gui
+- buttons
+- resources
+- robots;
+:init communication;
+:send data to controller
+- robots count
+- boards size (width & height)
+- base left corner piece position and border size;
+:wait for paths;
+:run all robots
+send resource request for all robots;
+
+repeat
+  :wait for new control event;
+  :move robot to newly assigned resource;
+  :send observable event;
+repeat while (robots have points on their paths?)
+
+stop
+@enduml
