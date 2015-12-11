@@ -58,7 +58,7 @@ class Board:
 
         self.size = size
         self.px_size = self.width / self.size
-        self.robots_size = 0.5 * self.px_size
+        self.robots_size = 0.6 * self.px_size
 
         self.initResources()
         self.initRobots()
@@ -194,6 +194,7 @@ class Robot:
             print "[%d] move %d, %d" % (self.id, speedX, speedY)
 
             self.canvas.move(self.item, speedX, speedY)
+            self.canvas.move(self.label, speedX, speedY)
             self.canvas.update_idletasks()
             pytime.sleep(0.025)
             if abs(self.current_delta[0] - self.delta[0]) == 0 and abs(self.current_delta[1] - self.delta[1]) == 0:
@@ -233,6 +234,8 @@ class Robot:
         y = self.board.resources[self.x][self.y].center[1]
         self.item = self.canvas.create_oval(
             x - self.r, y - self.r, x + self.r, y + self.r, fill=self.color)
+        self.label = self.canvas.create_text(x, y)
+        self.canvas.itemconfig(self.label, text=str(self.id))
         self.board.resources[self.x][self.y].update(ResourceState.occupied)
 
     # def goTo(self, point)
