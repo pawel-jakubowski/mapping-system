@@ -9,7 +9,7 @@ start
 :send data to controller
 - robots count
 - boards size (width & height)
-- base left corner piece position and border size;
+- base left corner piece position and its size;
 :wait for paths;
 :run all robots
 send resource request for all robots;
