@@ -169,34 +169,30 @@ class Robot:
     def __repr__(self):
         return "[" + str(self.x) + ", " + str(self.y) + "]"
 
+    def getNewSpeed(self, delta, current_delta):
+        if abs(delta - current_delta) >= self.speed:
+            if delta < 0:
+                return -self.speed
+            else:
+                return self.speed
+        else:
+            return delta - current_delta
+
     def animate(self, root, time):
         if self.shouldAnimate:
-            if abs(self.delta[0] - self.current_delta[0]) >= self.speed:
-                if self.delta[0] < 0:
-                    speedX = -self.speed
-                else:
-                    speedX = self.speed
-            else:
-                speedX = (self.delta[0] - self.current_delta[0])
-
-            if abs(self.delta[1] - self.current_delta[1]) >= self.speed:
-                if self.delta[1] < 0:
-                    speedY = -self.speed
-                else:
-                    speedY = self.speed
-            else:
-                speedY = (self.delta[1] - self.current_delta[1])
+            speedX = self.getNewSpeed(self.delta[0], self.current_delta[0])
+            speedY = self.getNewSpeed(self.delta[1], self.current_delta[1])
 
             self.current_delta[0] += speedX
             self.current_delta[1] += speedY
-            print "[%d] current %s" % (self.id, str(self.current_delta))
-            print "[%d] goal %s" % (self.id, str(self.delta))
-            print "[%d] move %d, %d" % (self.id, speedX, speedY)
+            # print "[%d] current %s" % (self.id, str(self.current_delta))
+            # print "[%d] goal %s" % (self.id, str(self.delta))
+            # print "[%d] move %d, %d" % (self.id, speedX, speedY)
 
             self.canvas.move(self.item, speedX, speedY)
             self.canvas.move(self.label, speedX, speedY)
             self.canvas.update_idletasks()
-            pytime.sleep(0.025)
+            pytime.sleep(0.0125)
             if abs(self.current_delta[0] - self.delta[0]) == 0 and abs(self.current_delta[1] - self.delta[1]) == 0:
                 self.shouldAnimate = False
                 self.board.resources[self.x][self.y].update(ResourceState.occupied)
@@ -206,9 +202,9 @@ class Robot:
         if x > self.board.size or x < 0:
             return
         if self.board.resources[x][self.y].state == ResourceState.occupied:
-            print "Robot %d goes to occupied resource [%d, %d]!" % (self.id, x, self.y)
+            # print "Robot %d goes to occupied resource [%d, %d]!" % (self.id, x, self.y)
             raise
-        print "[ROBOT %d] move to (%d, %d)" % (self.id, x, self.y)
+        # print "[ROBOT %d] move to (%d, %d)" % (self.id, x, self.y)
         self.delta = [(x - self.x) * self.board.px_size, 0]
         # print "[%d] goal %s" % (self.id, str(self.delta))
         self.current_delta = [0, 0]
@@ -220,9 +216,9 @@ class Robot:
         if (y > self.board.size or y < 0):
             return
         if self.board.resources[self.x][y].state == ResourceState.occupied:
-            print "Robot %d goes to occupied resource [%d, %d]!" % (self.id, self.x, y)
+            # print "Robot %d goes to occupied resource [%d, %d]!" % (self.id, self.x, y)
             raise
-        print "[ROBOT %d] move to (%d, %d)" % (self.id, self.x, y)
+        # print "[ROBOT %d] move to (%d, %d)" % (self.id, self.x, y)
         self.delta = [0, (y - self.y) * self.board.px_size]
         self.current_delta = [0, 0]
         self.shouldAnimate = True
