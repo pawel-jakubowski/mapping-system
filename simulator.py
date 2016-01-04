@@ -1,12 +1,15 @@
 import Tkinter as tk
-import gui
+from simulator import gui
+from simulator import communication as c
 
 
 def main():
     gui, app = initGui()
+    com = c.Communication()
     time = 1
     for robot in app.board.robots:
         gui.after(time, robot.animate, gui, time)
+    gui.after(time, com.recv_msg, gui, time)
     gui.mainloop()
 
 
