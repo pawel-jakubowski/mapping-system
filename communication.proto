@@ -1,24 +1,24 @@
 package communication;
 
 message Event {
-    required int32 robot = 1;
-    required int32 stage = 2;
+    required int32 robot = 1; // robot id
+    required int32 stage = 2; // currenly occupied waypoint
 }
 
 message Path {
     optional int32 robot = 1;
 
     message Stage {
-        required int32 x = 1;
-        required int32 y = 2;
+        required int32 x = 1; //next robot pos
+        required int32 y = 2; 
     }
     repeated Stage stage = 2;
 }
 
-message Robot {
+message Robot {	// robot init msg
     required int32 id = 1;
-    required int32 posX = 2;
-    required int32 posY = 3;
+    required int32 posX = 2; //  init robot pos 
+    required int32 posY = 3; 
     required double size = 4;
     optional double speed = 5 [default = 2]; 
 
