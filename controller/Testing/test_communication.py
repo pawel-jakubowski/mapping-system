@@ -37,15 +37,6 @@ class TestCommunication:
         msg = robot.SerializeToString()
         self.socket_pub.send("add_robot %s" % msg)
 
-    def sendEnv(self):
-        env = com.Environment()
-        env.x = 30
-        env.y = 30
-        env.baseX = 10
-        env.baseY = 10
-        msg = env.SerializeToString()
-        self.socket_pub.send("environment %s" % msg)
-
     def sendEvent(self, robot):
         event = com.Event()
         event.robot = robot
@@ -57,19 +48,17 @@ class TestCommunication:
 
 def main():
     test = TestCommunication()
-    time.sleep(1)
-    test.sendEnv()
-    time.sleep(2)
-    test.sendRobot()
-    time.sleep(5)
-    test.sendEvent(0)
-    test.sendEvent(1)
     while True:
-        string = test.socket_obs.recv()
-        topic, msg = string.split(' ', 1)
-        event = com.Event()
-        event.ParseFromString(msg)
-        print(event)
+	time.sleep(2)
+    	test.sendRobot()
+    	time.sleep(5)
+    	test.sendEvent(0)
+    	test.sendEvent(1)
+        #string = test.socket_obs.recv()
+        #topic, msg = string.split(' ', 1)
+        #event = com.Event()
+        #event.ParseFromString(msg)
+        #print(event)
 
 if __name__ == '__main__':
     main()  # This is executed if file is not imported

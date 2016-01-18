@@ -29,6 +29,8 @@ class Communication:
             topic, msg = string.split(' ', 1)
             if topic == "add_robot":
                 self.addRobot(msg, root, time)
+            if topic == "environment":
+                self.initEnvironment(msg)
         except zmq.error.ZMQError as e:
             if 'Resource temporarily unavailable' in str(e):
                 pass
@@ -55,6 +57,11 @@ class Communication:
         root.window.board.refresh()
         print("Robot created")
         root.after(time, robot.recvEvent, root, time)
+
+    def initEnvironment(self, msg):
+        env_msg = com.Environment()
+        env_msg.ParseFromString(msg)
+        print(env_msg)
 
     def sendEvent(self, robot_id):
         for r in self.robots:
