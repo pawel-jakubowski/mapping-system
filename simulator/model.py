@@ -53,7 +53,7 @@ class Robot:
                     if self.current_goal + 1 < len(self.path):
                         self.current_goal += 1
                         new_pos = self.path[self.current_goal]
-                        c(self.id, new_pos[0], new_pos[1])
+                        c(root, self.id, new_pos[0], new_pos[1])
                     else:
                         print("Robot %d ended move" % (self.id))
         except zmq.error.ZMQError as e:
