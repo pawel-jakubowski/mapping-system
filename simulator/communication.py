@@ -49,6 +49,10 @@ class Communication:
                             robot_msg.speed, path)
         robot.addMoveCallback(self.moveRobot)
         self.robots.append(robot)
+        root.window.board.addRobot(robot_msg.id, robot_msg.posX, robot_msg.posY)
+        sendEventLambda = lambda robot_id: self.sendEvent(robot_id)
+        root.window.board.robots[robot_msg.id].setEventCallback(sendEventLambda)
+        root.window.board.refresh()
         print("Robot created")
         root.after(time, robot.recvEvent, root, time)
 
@@ -56,8 +60,9 @@ class Communication:
         for r in self.robots:
             if r.id == robot_id:
                 r.sendEvent()
+        print "Get Event from: " + str(robot_id)
 
     @staticmethod
-    def moveRobot(robot_id, x, y):
-        # TODO fill
+    def moveRobot(root, robot_id, x, y):
+        root.window.moveRobot(robot_id, x, y)
         print(robot_id)

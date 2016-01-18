@@ -10,10 +10,16 @@ class Window:
 
   def __init__(self, root):
     self.root = root
+    root.window = self
     root.title(self.title)
     # root.minsize(width=900, height=780)
-    self.addBoard()
     self.addButtons()
+
+  def moveRobot(self, id, x, y):
+    if x != 0:
+      self.board.robots[id].moveX(x)
+    if y != 0:
+      self.board.robots[id].moveY(y)
 
   def moveRobots(self, x, y):
     for robot in self.board.robots:
@@ -37,11 +43,20 @@ class Window:
     for button in self.buttons:
       button.pack(fill="both")
 
-  def addBoard(self):
+  def addBoard(self, size):
     self.frames['canvas'] = tk.Frame(self.root)
     self.frames['canvas'].grid(row=0, column=1)
-    self.board = Board(self.frames['canvas'], 20)
+    self.board = Board(self.frames['canvas'], size)
     self.board.refresh()
+
+  def __repr__(self):
+    str = "Window is not initialized!"
+    if hasattr(self, "board"):
+      str = "Board size: %d\n" % self.board.size
+      str += "Robots: %d\n" % self.board.robots_count
+      str += "Robots coordinates:\n"
+      str += "[" + ", ".join(repr(x) for x in self.board.robots) + "]"
+    return str
 
 
 class Board:
@@ -49,7 +64,7 @@ class Board:
   size = 20
   robots_count = 5
   resources = []
-  robots = []
+  robots = {}
 
   def __init__(self, root, size=size, robots=robots_count):
     self.root = root
@@ -61,7 +76,6 @@ class Board:
     self.robots_size = 0.6 * self.px_size
 
     self.initResources()
-    self.initRobots()
 
   def initResources(self):
     px_size = self.width / self.size
@@ -75,13 +89,21 @@ class Board:
         resource = Resource([start_x, end_x], [start_y, end_y], self.canvas)
         self.resources[i].append(resource)
 
-  def initRobots(self):
-    for i in range(0, 6, 2):
-      x = i + (self.size / 2) - 3
-      y = self.size / 2
-      self.resources[x][y].update(ResourceState.base)
-      robot = Robot(len(self.robots), x, y, self.robots_size, self, self.canvas)
-      self.robots.append(robot)
+  def setBase(self, minPoint, maxPoint):
+    assert minPoint[0] >= 0 and minPoint[1] >= 0, "minPoint must be inside board!"
+    assert maxPoint[0] < self.size and maxPoint[1] < self.size, "maxPoint must be inside board!"
+    assert minPoint[0] <= maxPoint[0] and minPoint[1] <= maxPoint[1], "minPoint must be less or equal maxPoint"
+    print "Base:"
+    for x in range(minPoint[0], maxPoint[0]+1):
+      for y in range(minPoint[1], maxPoint[1]+1):
+        self.resources[x][y].update(ResourceState.base)
+
+  def addRobot(self, robotId, x, y):
+    assert x >= 0 and x < self.size, "x must be inside board!"
+    assert y >= 0 and y < self.size, "y must be inside board!"
+    self.robots[robotId] = Robot(robotId, x, y, self.robots_size, self, self.canvas)
+    time = 1
+    self.root.after(time, self.robots[robotId].animate, self.root, time)
 
   def refresh(self):
     self.canvas.delete("all")
@@ -93,14 +115,10 @@ class Board:
       for resource in row:
         resource.draw()
         # resource.drawCenter()
-    for i in range(0, 6, 2):
-      x = i + (self.size / 2) - 3
-      y = self.size / 2
-      self.resources[x][y].update(ResourceState.base)
 
   def drawRobots(self):
-    for robot in self.robots:
-      robot.draw()
+    for key in self.robots:
+      self.robots[key].draw()
 
 
 class ResourceState(Enum):
@@ -113,16 +131,16 @@ class ResourceState(Enum):
 class Resource:
   state = ResourceState.free
 
-  def __init__(self, x, y, canvas):
+  def __init__(self, x, y, canvas, state=ResourceState.free):
     self.x = x
     self.y = y
     self.canvas = canvas
     center_x = (self.x[1] - self.x[0]) / 2 + self.x[0]
     center_y = (self.y[1] - self.y[0]) / 2 + self.y[0]
     self.center = [center_x, center_y]
-
-  def draw(self, state=ResourceState.free):
     self.state = state
+
+  def draw(self):
     color = self.getBackgroundColor()
     self.item = self.canvas.create_rectangle(self.x[0], self.y[0], self.x[1], self.y[1],
                                              outline="black", fill=color)
@@ -166,9 +184,13 @@ class Robot:
     self.canvas = canvas
     self.current_delta = [0, 0]
     self.movementsQueue = []
+    self.event_callback = lambda : (_ for _ in ()).throw(Exception("Callback for robot " + str(self.id) + " was not set!"))
 
   def __repr__(self):
     return "[" + str(self.x) + ", " + str(self.y) + "]"
+
+  def setEventCallback(self, callback):
+    self.event_callback = lambda : callback(self.id)
 
   def moveOnCanvas(self, speedX, speedY):
     self.canvas.move(self.item, speedX, speedY)
@@ -258,6 +280,7 @@ class Robot:
       if abs(current_delta) < half_dist:
         self.currentResource.update(ResourceState.occupied)
       elif abs(current_delta) - self.robot.r > half_dist:
+        self.robot.event_callback()
         self.currentResource.update(ResourceState.free)
       if abs(current_delta) + self.robot.r > half_dist:
         self.robot.x = self.desiredPoint[0]

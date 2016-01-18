@@ -51,7 +51,7 @@ class Robot:
                 print("Robot %d should move" % self.id)
                 for c in self.move_callbacks:
                     new_pos = self.path[self.stage + 1]
-                    c(self.id, new_pos[0], new_pos[1])
+                    c(root, self.id, new_pos[0], new_pos[1])
         except zmq.error.ZMQError as e:
             if 'Resource temporarily unavailable' in str(e):
                 pass
