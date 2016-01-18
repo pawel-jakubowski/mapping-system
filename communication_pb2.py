@@ -18,11 +18,62 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='communication.proto',
   package='communication',
-  serialized_pb=_b('\n\x13\x63ommunication.proto\x12\rcommunication\"%\n\x05\x45vent\x12\r\n\x05robot\x18\x01 \x02(\x05\x12\r\n\x05stage\x18\x02 \x02(\x05\"^\n\x04Path\x12\r\n\x05robot\x18\x01 \x01(\x05\x12(\n\x05stage\x18\x02 \x03(\x0b\x32\x19.communication.Path.Stage\x1a\x1d\n\x05Stage\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\"r\n\x05Robot\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04posX\x18\x02 \x02(\x05\x12\x0c\n\x04posY\x18\x03 \x02(\x05\x12\x0c\n\x04size\x18\x04 \x02(\x01\x12\x10\n\x05speed\x18\x05 \x01(\x01:\x01\x32\x12!\n\x04path\x18\x06 \x01(\x0b\x32\x13.communication.Path')
+  serialized_pb=_b('\n\x13\x63ommunication.proto\x12\rcommunication\"A\n\x0b\x45nvironment\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\x12\r\n\x05\x62\x61seX\x18\x03 \x02(\x05\x12\r\n\x05\x62\x61seY\x18\x04 \x02(\x05\"%\n\x05\x45vent\x12\r\n\x05robot\x18\x01 \x02(\x05\x12\r\n\x05stage\x18\x02 \x02(\x05\"^\n\x04Path\x12\r\n\x05robot\x18\x01 \x01(\x05\x12(\n\x05stage\x18\x02 \x03(\x0b\x32\x19.communication.Path.Stage\x1a\x1d\n\x05Stage\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\"r\n\x05Robot\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04posX\x18\x02 \x02(\x05\x12\x0c\n\x04posY\x18\x03 \x02(\x05\x12\x0c\n\x04size\x18\x04 \x02(\x01\x12\x10\n\x05speed\x18\x05 \x01(\x01:\x01\x32\x12!\n\x04path\x18\x06 \x01(\x0b\x32\x13.communication.Path')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
+
+
+_ENVIRONMENT = _descriptor.Descriptor(
+  name='Environment',
+  full_name='communication.Environment',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='x', full_name='communication.Environment.x', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='y', full_name='communication.Environment.y', index=1,
+      number=2, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='baseX', full_name='communication.Environment.baseX', index=2,
+      number=3, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='baseY', full_name='communication.Environment.baseY', index=3,
+      number=4, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=38,
+  serialized_end=103,
+)
 
 
 _EVENT = _descriptor.Descriptor(
@@ -57,8 +108,8 @@ _EVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=38,
-  serialized_end=75,
+  serialized_start=105,
+  serialized_end=142,
 )
 
 
@@ -94,8 +145,8 @@ _PATH_STAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=142,
-  serialized_end=171,
+  serialized_start=209,
+  serialized_end=238,
 )
 
 _PATH = _descriptor.Descriptor(
@@ -130,8 +181,8 @@ _PATH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=77,
-  serialized_end=171,
+  serialized_start=144,
+  serialized_end=238,
 )
 
 
@@ -195,16 +246,24 @@ _ROBOT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=173,
-  serialized_end=287,
+  serialized_start=240,
+  serialized_end=354,
 )
 
 _PATH_STAGE.containing_type = _PATH
 _PATH.fields_by_name['stage'].message_type = _PATH_STAGE
 _ROBOT.fields_by_name['path'].message_type = _PATH
+DESCRIPTOR.message_types_by_name['Environment'] = _ENVIRONMENT
 DESCRIPTOR.message_types_by_name['Event'] = _EVENT
 DESCRIPTOR.message_types_by_name['Path'] = _PATH
 DESCRIPTOR.message_types_by_name['Robot'] = _ROBOT
+
+Environment = _reflection.GeneratedProtocolMessageType('Environment', (_message.Message,), dict(
+  DESCRIPTOR = _ENVIRONMENT,
+  __module__ = 'communication_pb2'
+  # @@protoc_insertion_point(class_scope:communication.Environment)
+  ))
+_sym_db.RegisterMessage(Environment)
 
 Event = _reflection.GeneratedProtocolMessageType('Event', (_message.Message,), dict(
   DESCRIPTOR = _EVENT,
