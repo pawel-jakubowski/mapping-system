@@ -13,6 +13,7 @@ class Robot:
         self.path = path
         self.socket_pub = socket_pub
         self.socket_sub = socket_sub
+        self.move_callbacks = []
 
     def update_path(self, path, stage=None):
         self.path = path
@@ -37,6 +38,9 @@ class Robot:
         self.socket_pub.send("%d %s" % (self.id, msg))
         print(msg, "sent")
 
+    def addMoveCallback(self, callback):
+        self.move_callbacks.append(callback)
+
     def recvEvent(self, root, time):
         try:
             string = self.socket_sub.recv(flags=zmq.NOBLOCK)
@@ -45,10 +49,12 @@ class Robot:
                 event = com.Event()
                 event.ParseFromString(msg)
                 print("Robot %d should move" % self.id)
-                # do sth to move robot
+                for c in self.move_callbacks:
+                    new_pos = self.path[self.stage + 1]
+                    c(self.id, new_pos[0], new_pos[1])
         except zmq.error.ZMQError as e:
             if 'Resource temporarily unavailable' in str(e):
-                return
+                pass
             else:
                 raise e
 

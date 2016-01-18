@@ -24,17 +24,16 @@ class Communication:
         self.socket_sub.setsockopt(zmq.SUBSCRIBE, '')
 
     def recv_msg(self, root, time):
-        # poll = zmq.Poller()
-        # poll.register(self.socket_sub, zmq.POLLIN)
-        # sockets = dict(poll.poll(1000))
         try:
             string = self.socket_sub.recv(flags=zmq.NOBLOCK)
             topic, msg = string.split(' ', 1)
             if topic == "add_robot":
                 self.addRobot(msg, root, time)
+            if topic == "environment":
+                self.initEnvironment(msg)
         except zmq.error.ZMQError as e:
             if 'Resource temporarily unavailable' in str(e):
-                return
+                pass
             else:
                 raise e
 
@@ -50,5 +49,22 @@ class Communication:
         robot = model.Robot(robot_msg.id, robot_msg.posX, robot_msg.posY,
                             robot_msg.size, self.socket_obs, self.socket_con,
                             robot_msg.speed, path)
+        robot.addMoveCallback(self.moveRobot)
         self.robots.append(robot)
+        print("Robot created")
         root.after(time, robot.recvEvent, root, time)
+
+    def initEnvironment(self, msg):
+        env_msg = com.Environment()
+        env_msg.ParseFromString(msg)
+        print(env_msg)
+
+    def sendEvent(self, robot_id):
+        for r in self.robots:
+            if r.id == robot_id:
+                r.sendEvent()
+
+    @staticmethod
+    def moveRobot(robot_id, x, y):
+        # TODO fill
+        pass

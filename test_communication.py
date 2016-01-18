@@ -37,6 +37,15 @@ class TestCommunication:
         msg = robot.SerializeToString()
         self.socket_pub.send("add_robot %s" % msg)
 
+    def sendEnv(self):
+        env = com.Environment()
+        env.x = 30
+        env.y = 30
+        env.baseX = 10
+        env.baseY = 10
+        msg = env.SerializeToString()
+        self.socket_pub.send("environment %s" % msg)
+
     def sendEvent(self, robot):
         event = com.Event()
         event.robot = robot
@@ -48,6 +57,8 @@ class TestCommunication:
 
 def main():
     test = TestCommunication()
+    time.sleep(1)
+    test.sendEnv()
     time.sleep(2)
     test.sendRobot()
     time.sleep(5)
