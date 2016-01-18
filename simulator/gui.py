@@ -24,9 +24,9 @@ class Window:
   def moveRobots(self, x, y):
     for key in self.board.robots:
       if x != 0:
-        self.board.robots[key].moveX(robot.x + x)
+        self.board.robots[key].moveX(self.board.robots[key].x + x)
       if y != 0:
-        self.board.robots[key].moveY(robot.y + y)
+        self.board.robots[key].moveY(self.board.robots[key].y + y)
 
   def addButtons(self):
     self.frames['buttons'] = tk.Frame(self.root)
@@ -184,7 +184,7 @@ class Robot:
     self.canvas = canvas
     self.current_delta = [0, 0]
     self.movementsQueue = []
-    self.event_callback = lambda : (_ for _ in ()).throw(Exception("Callback for robot " + str(self.id) + " was not set!"))
+    self.event_callback = lambda : True
 
   def __repr__(self):
     return "[" + str(self.x) + ", " + str(self.y) + "]"
