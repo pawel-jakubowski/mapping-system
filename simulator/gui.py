@@ -22,11 +22,11 @@ class Window:
       self.board.robots[id].moveY(y)
 
   def moveRobots(self, x, y):
-    for robot in self.board.robots:
+    for key in self.board.robots:
       if x != 0:
-        robot.moveX(robot.x + x)
+        self.board.robots[key].moveX(robot.x + x)
       if y != 0:
-        robot.moveY(robot.y + y)
+        self.board.robots[key].moveY(robot.y + y)
 
   def addButtons(self):
     self.frames['buttons'] = tk.Frame(self.root)
@@ -172,7 +172,7 @@ class Resource:
 
 
 class Robot:
-  speed = 5
+  speed = 1
   color = "light blue"
 
   def __init__(self, id, x, y, size, board, canvas):
