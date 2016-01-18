@@ -1,5 +1,5 @@
 import zmq
-import time
+# import time
 import model
 import communication_pb2 as com
 
@@ -24,14 +24,19 @@ class Communication:
         self.socket_sub.setsockopt(zmq.SUBSCRIBE, '')
 
     def recv_msg(self, root, time):
-        poll = zmq.Poller()
-        poll.register(self.socket_sub, zmq.POLLIN)
-        sockets = dict(poll.poll(1000))
-        if self.socket_sub in sockets:
-            string = self.socket_sub.recv()
+        # poll = zmq.Poller()
+        # poll.register(self.socket_sub, zmq.POLLIN)
+        # sockets = dict(poll.poll(1000))
+        try:
+            string = self.socket_sub.recv(flags=zmq.NOBLOCK)
             topic, msg = string.split(' ', 1)
             if topic == "add_robot":
                 self.addRobot(msg, root, time)
+        except zmq.error.ZMQError as e:
+            if 'Resource temporarily unavailable' in str(e):
+                return
+            else:
+                raise e
 
         root.after(time, self.recv_msg, root, time)
 

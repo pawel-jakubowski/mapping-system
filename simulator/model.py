@@ -1,7 +1,10 @@
 import zmq
 import communication_pb2 as com
+
+
 class Robot:
-    def __init__(self, id, x, y, size, socket_pub, socket_sub, speed=2, path=[]):
+    def __init__(self, id, x, y, size, socket_pub, socket_sub, speed=2,
+                 path=[]):
         self.id = id
         self.x = x
         self.y = y
@@ -35,15 +38,18 @@ class Robot:
         print(msg, "sent")
 
     def recvEvent(self, root, time):
-        poll = zmq.Poller()
-        poll.register(self.socket_sub, zmq.POLLIN)
-        sockets = dict(poll.poll(1000))
-        if self.socket_sub in sockets:
-            string = self.socket_sub.recv()
+        try:
+            string = self.socket_sub.recv(flags=zmq.NOBLOCK)
             topic, msg = string.split(' ', 1)
             if topic == str(self.id):
                 event = com.Event()
                 event.ParseFromString(msg)
                 print("Robot %d should move" % self.id)
                 # do sth to move robot
+        except zmq.error.ZMQError as e:
+            if 'Resource temporarily unavailable' in str(e):
+                return
+            else:
+                raise e
+
         root.after(time, self.recvEvent, root, time)
