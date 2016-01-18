@@ -34,6 +34,9 @@ class TestCommunication:
         stage = robot.path.stage.add()
         stage.x = 4
         stage.y = 4
+        stage = robot.path.stage.add()
+        stage.x = 4
+        stage.y = 3
         msg = robot.SerializeToString()
         self.socket_pub.send("add_robot %s" % msg)
 
@@ -52,7 +55,6 @@ class TestCommunication:
         event.stage = 1
         msg = event.SerializeToString()
         self.socket_con.send("%d %s" % (event.robot, msg))
-        print(msg, "sent")
 
 
 def main():
@@ -63,7 +65,9 @@ def main():
     test.sendRobot()
     time.sleep(5)
     test.sendEvent(0)
+    time.sleep(1)
     test.sendEvent(1)
+    test.sendEvent(0)
     while True:
         string = test.socket_obs.recv()
         topic, msg = string.split(' ', 1)

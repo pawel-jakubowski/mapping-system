@@ -51,6 +51,7 @@ class Communication:
                             robot_msg.speed, path)
         robot.addMoveCallback(self.moveRobot)
         self.robots.append(robot)
+        self.sendEvent(robot.id)
         print("Robot created")
         root.after(time, robot.recvEvent, root, time)
 
@@ -62,6 +63,7 @@ class Communication:
     def sendEvent(self, robot_id):
         for r in self.robots:
             if r.id == robot_id:
+                print(r.path, r.stage)
                 r.sendEvent()
 
     @staticmethod

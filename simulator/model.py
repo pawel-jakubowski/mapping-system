@@ -10,6 +10,7 @@ class Robot:
         self.y = y
         self.speed = speed
         self.stage = 0
+        self.current_goal = 0
         self.path = path
         self.socket_pub = socket_pub
         self.socket_sub = socket_sub
@@ -36,7 +37,6 @@ class Robot:
         event.stage = self.stage
         msg = event.SerializeToString()
         self.socket_pub.send("%d %s" % (self.id, msg))
-        print(msg, "sent")
 
     def addMoveCallback(self, callback):
         self.move_callbacks.append(callback)
@@ -50,8 +50,12 @@ class Robot:
                 event.ParseFromString(msg)
                 print("Robot %d should move" % self.id)
                 for c in self.move_callbacks:
-                    new_pos = self.path[self.stage + 1]
-                    c(self.id, new_pos[0], new_pos[1])
+                    if self.current_goal + 1 < len(self.path):
+                        self.current_goal += 1
+                        new_pos = self.path[self.current_goal]
+                        c(self.id, new_pos[0], new_pos[1])
+                    else:
+                        print("Robot %d ended move" % (self.id))
         except zmq.error.ZMQError as e:
             if 'Resource temporarily unavailable' in str(e):
                 pass
