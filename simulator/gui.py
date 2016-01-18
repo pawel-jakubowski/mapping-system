@@ -98,10 +98,11 @@ class Board:
       for y in range(minPoint[1], maxPoint[1]+1):
         self.resources[x][y].update(ResourceState.base)
 
-  def addRobot(self, robotId, x, y):
+  def addRobot(self, robotId, x, y, speed = 5):
     assert x >= 0 and x < self.size, "x must be inside board!"
     assert y >= 0 and y < self.size, "y must be inside board!"
     self.robots[robotId] = Robot(robotId, x, y, self.robots_size, self, self.canvas)
+    self.robots[robotId].speed = speed
     time = 1
     self.root.after(time, self.robots[robotId].animate, self.root, time)
 
@@ -172,18 +173,18 @@ class Resource:
 
 
 class Robot:
-  speed = 1
+  speed = 5
   color = "light blue"
 
   def __init__(self, id, x, y, size, board, canvas):
     self.id = id
-    self.x = self.endX = x
-    self.y = self.endY = y
+    self.x = self.end_x = x
+    self.y = self.end_y = y
     self.r = size / 2
     self.board = board
     self.canvas = canvas
     self.current_delta = [0, 0]
-    self.movementsQueue = []
+    self.movements_queue = []
     self.event_callback = lambda : True
 
   def __repr__(self):
@@ -192,38 +193,38 @@ class Robot:
   def setEventCallback(self, callback):
     self.event_callback = lambda : callback(self.id)
 
-  def moveOnCanvas(self, speedX, speedY):
-    self.canvas.move(self.item, speedX, speedY)
-    self.canvas.move(self.label, speedX, speedY)
+  def moveOnCanvas(self, delta_x, delta_y):
+    self.canvas.move(self.item, delta_x, delta_y)
+    self.canvas.move(self.label, delta_x, delta_y)
     self.canvas.update_idletasks()
-    pytime.sleep(0.025)
+    pytime.sleep(0.025 / self.speed)
 
   def animate(self, root, time):
     if hasattr(self, 'animation'):
-      self.animation.update(self.speed)
+      self.animation.update()
       if self.animation.isFinished():
-        self.movementsQueue.pop(0)
+        self.movements_queue.pop(0)
         del self.animation
-    elif len(self.movementsQueue) > 0:
-      movement = self.movementsQueue[0]
-      currentResource = self.board.resources[movement.startPoint[0]][movement.startPoint[1]]
-      futureResource = self.board.resources[movement.desiredPoint[0]][movement.desiredPoint[1]]
-      self.animation = self.Animation(movement, currentResource, futureResource, self.board.px_size, self)
+    elif len(self.movements_queue) > 0:
+      movement = self.movements_queue[0]
+      current_resource = self.board.resources[movement.start_point[0]][movement.start_point[1]]
+      future_resource = self.board.resources[movement.desired_point[0]][movement.desired_point[1]]
+      self.animation = self.Animation(movement, current_resource, future_resource, self.board.px_size, self)
     root.after(time, self.animate, root, time)
 
   def moveX(self, x):
     if x > self.board.size or x < 0:
       return
-    movement = self.Movement([self.endX, self.endY], [x, self.endY], self.board.px_size)
-    self.movementsQueue.append(movement)
-    self.endX = x
+    movement = self.Movement([self.end_x, self.end_y], [x, self.end_y], self.board.px_size)
+    self.movements_queue.append(movement)
+    self.end_x = x
 
   def moveY(self, y):
     if (y > self.board.size or y < 0):
       return
-    movement = self.Movement([self.endX, self.endY], [self.endX, y], self.board.px_size)
-    self.movementsQueue.append(movement)
-    self.endY = y
+    movement = self.Movement([self.end_x, self.end_y], [self.end_x, y], self.board.px_size)
+    self.movements_queue.append(movement)
+    self.end_y = y
 
   def draw(self):
     x = self.board.resources[self.x][self.y].center[0]
@@ -235,63 +236,65 @@ class Robot:
     self.board.resources[self.x][self.y].update(ResourceState.occupied)
 
   class Movement:
-    def __init__(self, startPoint, desiredPoint, px_size):
-      self.startPoint = startPoint
-      self.desiredPoint = desiredPoint
+    def __init__(self, start_point, desired_point, px_size):
+      self.start_point = start_point
+      self.desired_point = desired_point
       self.delta = [
-        (desiredPoint[0] - startPoint[0]) * px_size,
-        (desiredPoint[1] - startPoint[1]) * px_size
+        (desired_point[0] - start_point[0]) * px_size,
+        (desired_point[1] - start_point[1]) * px_size
       ]
 
   class Animation:
-    def __init__(self, movement, currentResource, futureResource, px_size, robot):
-      if futureResource.state == ResourceState.occupied:
+    def __init__(self, movement, current_resource, future_resource, px_size, robot):
+      if future_resource.state == ResourceState.occupied:
         raise
       self.delta = movement.delta
-      self.startPoint = movement.startPoint
-      self.desiredPoint = movement.desiredPoint
-      self.currentResource = currentResource
-      self.futureResource = futureResource
+      self.start_point = movement.start_point
+      self.desired_point = movement.desired_point
+      self.current_resource = current_resource
+      self.future_resource = future_resource
       self.current_delta = [0, 0]
       self.px_size = px_size
       self.robot = robot
 
-    def update(self, speed):
+    def update(self):
       if self.delta[0] != 0:
-        self.current_delta[0], speed = self.updatePosition(speed, self.delta[0], self.current_delta[0])
-        self.robot.moveOnCanvas(speed, 0)
+        self.current_delta[0], delta = self.updatePosition(self.delta[0], self.current_delta[0])
+        self.robot.moveOnCanvas(delta, 0)
       if self.delta[1] != 0:
-        self.current_delta[1], speed = self.updatePosition(speed, self.delta[1], self.current_delta[1])
-        self.robot.moveOnCanvas(0, speed)
+        self.current_delta[1], delta = self.updatePosition(self.delta[1], self.current_delta[1])
+        self.robot.moveOnCanvas(0, delta)
 
     def isFinished(self):
       return \
         abs(self.current_delta[0] - self.delta[0]) == 0 and \
         abs(self.current_delta[1] - self.delta[1]) == 0
 
-    def updatePosition(self, speed, delta, current_delta):
-      speed = self.getNewSpeed(speed, delta, current_delta)
-      current_delta += speed
+    def updatePosition(self, delta, current_delta):
+      step_delta = self.getStepDelta(delta, current_delta)
+      current_delta += step_delta
       self.updateResource(current_delta)
-      return current_delta, speed
+      return current_delta, step_delta
 
     def updateResource(self, current_delta):
       half_dist = self.px_size / 2
       if abs(current_delta) < half_dist:
-        self.currentResource.update(ResourceState.occupied)
+        self.current_resource.update(ResourceState.occupied)
       elif abs(current_delta) - self.robot.r > half_dist:
         self.robot.event_callback()
-        self.currentResource.update(ResourceState.free)
+        self.current_resource.update(ResourceState.free)
       if abs(current_delta) + self.robot.r > half_dist:
-        self.robot.x = self.desiredPoint[0]
-        self.robot.y = self.desiredPoint[1]
-        self.futureResource.update(ResourceState.occupied)
+        self.robot.x = self.desired_point[0]
+        self.robot.y = self.desired_point[1]
+        self.future_resource.update(ResourceState.occupied)
 
-    def getNewSpeed(self, speed, delta, current_delta):
-      if abs(delta - current_delta) >= speed:
+    def getStepDelta(self, delta, current_delta):
+      step_delta = int(self.px_size / 10)
+      step_delta = 1 if step_delta <= 0 else step_delta
+      if abs(delta - current_delta) >= step_delta:
         if delta < 0:
-          return -speed
+          return -step_delta
         else:
-          return speed
+          return step_delta
       else:
         return delta - current_delta

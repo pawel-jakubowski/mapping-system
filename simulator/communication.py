@@ -51,7 +51,7 @@ class Communication:
                             robot_msg.speed, path)
         robot.addMoveCallback(self.moveRobot)
         self.robots.append(robot)
-        root.window.board.addRobot(robot_msg.id, robot_msg.posX, robot_msg.posY)
+        root.window.board.addRobot(robot_msg.id, robot_msg.posX, robot_msg.posY, robot_msg.speed)
         sendEventLambda = lambda robot_id: self.sendEvent(robot_id)
         root.window.board.robots[robot_msg.id].setEventCallback(sendEventLambda)
         root.window.board.refresh()

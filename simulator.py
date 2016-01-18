@@ -13,10 +13,10 @@ def main():
     gui.window.addBoard(20)
     gui.window.board.setBase([7,10],[11,10])
     # Init robots
-    gui.window.board.addRobot(0, 7, 10)
-    gui.window.board.addRobot(1, 9, 10)
-    gui.window.board.addRobot(2, 11, 10)
-    gui.window.board.refresh()
+    # gui.window.board.addRobot(0, 7, 10)
+    # gui.window.board.addRobot(1, 9, 10)
+    # gui.window.board.addRobot(2, 11, 10)
+    # gui.window.board.refresh()
     # Example how to move robots
     # gui.window.moveRobot(0, 7, 11)
 
