@@ -25,7 +25,7 @@ class TestCommunication:
     def sendRobot(self):
         robot = com.Robot()
         robot.id = 0
-        robot.posX = 5
+        robot.posX = 4
         robot.posY = 5
         robot.size = 1
         stage = robot.path.stage.add()

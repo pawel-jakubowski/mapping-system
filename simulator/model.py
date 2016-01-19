@@ -29,14 +29,17 @@ class Robot:
                         break
 
     def sendEvent(self):
-        self.stage = self.stage + 1
-        self.x = self.path[self.stage][0]
-        self.y = self.path[self.stage][1]
-        event = com.Event()
-        event.robot = self.id
-        event.stage = self.stage
-        msg = event.SerializeToString()
-        self.socket_pub.send("%d %s" % (self.id, msg))
+        if self.stage + 1 < len(self.path):
+            self.stage = self.stage + 1
+            self.x = self.path[self.stage][0]
+            self.y = self.path[self.stage][1]
+            event = com.Event()
+            event.robot = self.id
+            event.stage = self.stage
+            msg = event.SerializeToString()
+            self.socket_pub.send("%d %s" % (self.id, msg))
+        else:
+            print("Robot %d ended move" % self.id)
 
     def addMoveCallback(self, callback):
         self.move_callbacks.append(callback)
@@ -54,6 +57,9 @@ class Robot:
                         self.current_goal += 1
                         new_pos = self.path[self.current_goal]
                         c(root, self.id, new_pos[0], new_pos[1])
+                        print("Robot %d should move to (%d, %d)" % (self.id,
+                                                                    new_pos[0],
+                                                                    new_pos[1]))
                     else:
                         print("Robot %d ended move" % (self.id))
         except zmq.error.ZMQError as e:
