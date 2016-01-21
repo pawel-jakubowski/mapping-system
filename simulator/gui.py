@@ -246,8 +246,8 @@ class Robot:
 
   class Animation:
     def __init__(self, movement, current_resource, future_resource, px_size, robot):
-      if future_resource.state == ResourceState.occupied:
-        raise
+#      if future_resource.state == ResourceState.occupied:
+#        raise
       self.delta = movement.delta
       self.start_point = movement.start_point
       self.desired_point = movement.desired_point
