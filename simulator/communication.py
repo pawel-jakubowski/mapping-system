@@ -57,6 +57,7 @@ class Communication:
         root.window.board.refresh()
         print("Robot created")
         root.after(time, robot.recvEvent, root, time)
+        robot.sendEvent()
 
     def initEnvironment(self, msg):
         env_msg = com.Environment()

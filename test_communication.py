@@ -63,17 +63,18 @@ def main():
     test.sendEnv()
     time.sleep(2)
     test.sendRobot()
-    time.sleep(5)
-    test.sendEvent(0)
     time.sleep(1)
-    test.sendEvent(1)
-    test.sendEvent(0)
+    # test.sendEvent(0)
+    # time.sleep(1)
+    # test.sendEvent(1)
+    # test.sendEvent(0)
     while True:
         string = test.socket_obs.recv()
         topic, msg = string.split(' ', 1)
         event = com.Event()
         event.ParseFromString(msg)
         print(event)
+        test.sendEvent(event.robot)
 
 if __name__ == '__main__':
     main()  # This is executed if file is not imported
