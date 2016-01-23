@@ -16,10 +16,8 @@ class Window:
     self.addButtons()
 
   def moveRobot(self, id, x, y):
-    if x != 0:
-      self.board.robots[id].moveX(x)
-    if y != 0:
-      self.board.robots[id].moveY(y)
+    self.board.robots[id].moveX(x)
+    self.board.robots[id].moveY(y)
 
   def moveRobots(self, x, y):
     for key in self.board.robots:
