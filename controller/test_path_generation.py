@@ -5,11 +5,11 @@ rows = []
 
 yMax=20
 xMax=20
-n_robots=5
+n_robots=7
 
 r1_state0=[7,10]
 r2_state0=[8,10]
-base=[r1_state0,r2_state0,[9,10],[10,10],[11,10]]
+base=[r1_state0,r2_state0,[9,10],[10,10],[11,10],[12,10],[13,10]]
 #0 1 2 3
 #1
 #2
@@ -77,6 +77,11 @@ for y in range(yMax):
             e = Entry(relief=RIDGE, bg = 'blue', justify = 'center',width=3)
         elif[y,x] in path[4]:
             e = Entry(relief=RIDGE, bg = 'yellow', justify = 'center',width=3)
+        elif[y,x] in path[5]:
+            e = Entry(relief=RIDGE, bg = 'magenta', justify = 'center',width=3)
+        elif[y,x] in path[6]:
+            e = Entry(relief=RIDGE, bg = 'cyan', justify = 'center',width=3)
+
         else:
             e = Entry(relief=RIDGE, justify = 'center',width=3)
         e.grid(row=x, column=y, sticky=NSEW)
