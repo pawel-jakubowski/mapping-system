@@ -2,6 +2,7 @@ import zmq
 # import time
 import model
 import communication_pb2 as com
+import time as t
 
 
 class Communication:
@@ -23,13 +24,13 @@ class Communication:
         self.socket_con.setsockopt(zmq.SUBSCRIBE, '')
         self.socket_sub.setsockopt(zmq.SUBSCRIBE, '')
 
-    def recv_msg(self, root, time):
+    def recv_msg( self, root, time):
         try:
             string = self.socket_sub.recv(flags=zmq.NOBLOCK)
             topic, msg = string.split(' ', 1)
             if topic == "add_robot":
                 self.addRobot(msg, root, time)
-            if topic == "environment":
+            elif topic == "environment":
                 self.initEnvironment(msg)
         except zmq.error.ZMQError as e:
             if 'Resource temporarily unavailable' in str(e):
@@ -38,6 +39,20 @@ class Communication:
                 raise e
 
         root.after(time, self.recv_msg, root, time)
+
+    def recv_event(self, root, time):
+        try:
+            string = self.socket_con.recv(flags=zmq.NOBLOCK)
+            print(string)
+            topic, msg = string.split(' ', 1)
+            self.robots[int(topic)].recvEvent(msg, root)
+        except zmq.error.ZMQError as e:
+            if 'Resource temporarily unavailable' in str(e):
+                pass
+            else:
+                raise e
+
+        root.after(time, self.recv_event, root, time)
 
     def addRobot(self, msg, root, time):
         robot_msg = com.Robot()
@@ -56,7 +71,6 @@ class Communication:
         root.window.board.robots[robot_msg.id].setEventCallback(sendEventLambda)
         root.window.board.refresh()
         print("Robot created")
-        root.after(time, robot.recvEvent, root, time)
         robot.sendEvent()
 
     def initEnvironment(self, msg):

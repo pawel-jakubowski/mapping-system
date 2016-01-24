@@ -23,6 +23,7 @@ def main():
     com = c.Communication()
     time = 1
     gui.after(time, com.recv_msg, gui, time)
+    gui.after(time, com.recv_event, gui, time)
     gui.mainloop()
 
 if __name__ == '__main__':

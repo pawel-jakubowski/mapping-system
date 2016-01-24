@@ -1,4 +1,3 @@
-import zmq
 import communication_pb2 as com
 
 
@@ -44,28 +43,17 @@ class Robot:
     def addMoveCallback(self, callback):
         self.move_callbacks.append(callback)
 
-    def recvEvent(self, root, time):
-        try:
-            string = self.socket_sub.recv(flags=zmq.NOBLOCK)
-            topic, msg = string.split(' ', 1)
-            if topic == str(self.id):
-                event = com.Event()
-                event.ParseFromString(msg)
-                print("Robot %d should move" % self.id)
-                for c in self.move_callbacks:
-                    if self.current_goal + 1 < len(self.path):
-                        self.current_goal += 1
-                        new_pos = self.path[self.current_goal]
-                        c(root, self.id, new_pos[0], new_pos[1])
-                        print("Robot %d should move to (%d, %d)" % (self.id,
-                                                                    new_pos[0],
-                                                                    new_pos[1]))
-                    else:
-                        print("Robot %d ended move" % (self.id))
-        except zmq.error.ZMQError as e:
-            if 'Resource temporarily unavailable' in str(e):
-                pass
+    def recvEvent(self, msg, root):
+        event = com.Event()
+        event.ParseFromString(msg)
+        print("Robot %d should move" % self.id)
+        for c in self.move_callbacks:
+            if self.current_goal + 1 < len(self.path):
+                self.current_goal += 1
+                new_pos = self.path[self.current_goal]
+                c(root, self.id, new_pos[0], new_pos[1])
+                print("Robot %d should move to (%d, %d)" % (self.id,
+                                                            new_pos[0],
+                                                            new_pos[1]))
             else:
-                raise e
-
-        root.after(time, self.recvEvent, root, time)
+                print("Robot %d ended move" % (self.id))
