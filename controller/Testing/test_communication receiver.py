@@ -9,7 +9,7 @@ class TestCommunication:
     port_con = 3333  # controllable events
     context = zmq.Context()
     socket_pub = context.socket(zmq.SUB)
-    #socket_obs = context.socket(zmq.PUB)
+    socket_obs = context.socket(zmq.PUB)
     socket_con = context.socket(zmq.SUB)
 
     def __init__(self):
@@ -28,12 +28,11 @@ def main():
     time.sleep(2)
     while True:
         string_pub = test.socket_pub.recv()
-	string_con = test.socket_con.recv()
-        #topic, msg = string.split(' ', 1)
-        #event = com.Event()
-        #event.ParseFromString(msg)
-        print(string_pub)
-	print(string_con)
+        string_con = test.socket_con.recv()
+        topic, msg = string.split(' ', 1)
+        event = com.Event()
+        event.ParseFromString(msg)
+        print (event)
 
 if __name__ == '__main__':
     main()  # This is executed if file is not imported
