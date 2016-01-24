@@ -17,7 +17,7 @@ base=[r1_state0,r2_state0,[9,10],[10,10],[11,10],[12,10],[13,10]]
 path=[]
 path_temp=[]
 
-for n in range(0,n_robots):
+for n in range(0,n_robots-1):
     for i in range(0,base[n][1]+1-n):  #czyli od punktu bazowego do zera
         path_temp.append([base[n][0],base[n][1]-i]) #x sie nie zmienia
 
