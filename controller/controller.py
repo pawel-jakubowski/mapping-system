@@ -13,7 +13,7 @@ class Controller:
     socket_con = context.socket(zmq.PUB)
 
 
-################################################################################################################################################
+
     def __init__(self):
         self.socket_pub.bind("tcp://*:%s" % self.port_pub)
         self.socket_obs.connect("tcp://localhost:%s" % self.port_obs)
@@ -21,7 +21,7 @@ class Controller:
         self.socket_obs.setsockopt(zmq.SUBSCRIBE, '')
 
 
-################################################################################################################################################
+
     def defineEnv(self,x,y,base_x,base_y):
         env = com.Environment()
         env.x = x
@@ -32,75 +32,80 @@ class Controller:
         self.socket_pub.send("environment %s" % msg)
 
 
-################################################################################################################################################
+
     def PathGeneration(self):
-	#definicja poszczegolnych robotow
-	#generowanie sciezki robota
-	#symulator generuje sciez
-	#generujemy tez jak wyglada w punkcie startowym sate czyli cala plansza ktore resourcy sa zajete a ktore nie (!!!! CZyli wszystkie resourcy 		#sa wolen)
+	
 	return 0
 
 
-################################################################################################################################################
+
     def defineRobot(self, robot_id, robot_x0, robot_y0, robot_path):#define how many robots should be created
         robot = com.Robot()
         robot.id = robot_id
         robot.posX = robot_x0
         robot.posY = robot_y0
         robot.size = 1
-	# @Przemek Bartosik 
-	#there should be incrementation of robot path, each robot should have define the path based on environment parameters
-        stage = robot.path.stage.add()#first stage shoud be equal to the base stage!!! stage 0
+	stage = robot.path.stage.add()
         stage.x = robot_x0
         stage.y = robot_y0
-        stage = robot.path.stage.add()#next stage stage=1 and go on
+        stage = robot.path.stage.add()
         stage.x = robot_x0
         stage.y = robot_y0+1
         stage = robot.path.stage.add()
         stage.x = robot_x0
         stage.y = robot_y0+2
-        msg = robot.SerializeToString()
+	stage = robot.path.stage.add()
+        stage.x = robot_x0
+        stage.y = robot_y0+3
+	stage = robot.path.stage.add()
+        stage.x = robot_x0
+        stage.y = robot_y0+4
+	msg = robot.SerializeToString()
         self.socket_pub.send("add_robot %s" % msg)
 
 
-################################################################################################################################################
+
     def QueueController(self):
 	string = self.socket_obs.recv()
         topic, msg = string.split(' ', 1)
         event = com.Event()
         event.ParseFromString(msg)
-	event_table=[event.robot,event.stage,event.stage-1,event.stage-2] #tablica danych z eventu [robot id, stage/resource ktory chce zajac dany robot, stage/resource w ktorym jest dany robot, stage resource w ktorym byl dany robot] na podstawie path danego robota wyznaczamy x y poszczegolnych stagow/resourcow
+	event_table=[event.robot,event.stage,event.stage-1,event.stage-2] 
         print(event)
 	print(event_table)
 	return event_table   
-################################################################################################################################################
+
+
+
     def ControlableEvent(self, robot, stage):
         event = com.Event()
         event.robot = robot
         event.stage = stage
-	#przy kazdym wyslaniu eventu controlnego(czyli przesunieciu robota do danego staga) powinna zostac wywolana funckja Update state ktora jest odpowiadzialna za stan calego symulatora 
-        msg = event.SerializeToString()
+	msg = event.SerializeToString()
 	print "send control event"
+	print event.robot
+	print event.stage
         self.socket_con.send("%d %s" % (event.robot, msg))
 
 
-################################################################################################################################################
-    def InitEnvPathSendMessage(self):# ta wiadmosc wysyalana jest tylko jeden raz
+
+
+    def InitEnvPathSendMessage(self):
 	print "sending the initialize environment/path message"
 	time.sleep(1)
 	self.defineEnv(20,20,10,10)
 	time.sleep(1)
-	self.defineRobot(1,7,10,self.PathGeneration())
+	self.defineRobot(0,7,10,self.PathGeneration())
 	time.sleep(1)
-	self.defineRobot(2,8,10,self.PathGeneration())
+	self.defineRobot(1,8,10,self.PathGeneration())
 	time.sleep(1)
-	self.defineRobot(3,9,10,self.PathGeneration())
+	#self.defineRobot(2,9,10,self.PathGeneration())
 	time.sleep(1)
-	self.defineRobot(4,10,10,self.PathGeneration())
+	#self.defineRobot(3,10,10,self.PathGeneration())
 	time.sleep(1)
-	self.defineRobot(5,11,10,self.PathGeneration())
+	#self.defineRobot(4,11,10,self.PathGeneration())
 	time.sleep(1)
-	#wysylamy sciezki kazdego robota na poczatku do symulatora
+
 
 
     
@@ -148,20 +153,17 @@ def main():
     controller = Controller()
     time.sleep(1)
     controller.InitEnvPathSendMessage()
-    time.sleep(5)
-    controller.ControlableEvent(1,1)
-    controller.ControlableEvent(2,1)
-    controller.ControlableEvent(3,1)
-    controller.ControlableEvent(4,1)
-    controller.ControlableEvent(5,1)
-    #time.sleep(5)
-    #controller.ControlableEvent(1,2)
-    #controller.ControlableEvent(2,2)
-    #controller.ControlableEvent(3,2)
-    #controller.ControlableEvent(4,2)
-    #controller.ControlableEvent(5,2)
-    #while True:
-        #controller.QueueController(controller)
+    time.sleep(2)
+    while True:
+ 	string = controller.socket_obs.recv()
+        topic, msg = string.split(' ', 1)
+        event = com.Event()
+        event.ParseFromString(msg)
+	print(event)
+	print(event.robot)
+	print(event.stage)
+	controller.ControlableEvent(1,1)
+	#time.sleep(1)
 
 if __name__ == '__main__':
     main()  # This is executed if file is not imported
