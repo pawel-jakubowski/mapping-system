@@ -84,13 +84,16 @@ class Controller:
 
         #path0 = [[7, 10], [7, 9], [7, 8], [7, 7], [7, 6], [7, 5], [7, 4], [7, 3], [7, 2], [7, 1], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 0], [16, 0], [17, 0], [18, 0], [19, 0], [19, 1], [19, 2], [19, 3], [19, 4], [19, 5], [19, 6], [19, 7], [19, 8], [19, 9], [19, 10], [19, 11], [19, 12], [19, 13], [19, 14], [19, 15], [19, 16], [19, 17], [19, 18], [19, 19], [18, 19], [17, 19], [16, 19], [15, 19], [14, 19], [13, 19], [12, 19], [11, 19], [10, 19], [9, 19], [8, 19], [7, 19], [6, 19], [5, 19], [4, 19], [3, 19], [2, 19], [1, 19], [0, 19], [0, 18], [0, 17], [0, 16], [0, 15], [0, 14], [0, 13], [0, 12], [0, 11], [0, 10], [0, 9], [0, 8], [0, 7], [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1], [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8], [7, 9], [7, 10]]
         #path1 = [[8,10], [8,11], [8,12], [8,13], [8,14], [8,15], [8,16]]
+        path3=[[6, 6], [6, 7], [6, 8], [6, 9], [6, 10], [6, 11], [6, 12], [6, 13], [7, 11], [7, 12], [7, 13], [8, 11], [8, 12], [8, 13], [9, 11], [9, 12], [9, 13], [10, 11], [10, 12], [10, 13], [11, 11], [11, 12], [11, 13], [12, 11], [12, 12], [12, 13], [13, 6], [13, 7], [13, 8], [13, 9], [13, 10], [13, 11], [13, 12], [13, 13]]
 
 
-        if robotID == 0:
-            tempPath = {'robotID': robotID, 'path':path_temp}   #teraz generacja trasy jest zalezna od nr. robota wiec wszedzie wpsiujemy  ta sama   [old one path0]
-        else:
-            tempPath = {'robotID': robotID, 'path':path_temp} #[old one path1]
 
+       # if robotID == 0:
+       #     tempPath = {'robotID': robotID, 'path':path0}   #teraz generacja trasy jest zalezna od nr. robota wiec wszedzie wpsiujemy  ta sama   [old one path0]
+       # else:
+       #     tempPath = {'robotID': robotID, 'path':path1} #[old one path1]
+
+        tempPath = {'robotID': robotID, 'path':path_temp}
         # remember path in robotsPaths dict!
         self.robotsPaths.append(tempPath)
         if robotID == 0:
@@ -298,22 +301,25 @@ class Controller:
     def sendEnvMsg(self):
         # ta wiadmosc wysyalana jest tylko jeden raz
         # wysylamy sciezki kazdego robota na poczatku do symulatora
+        n_robots=6 #total number of robots [will use it in path generation] could be a global?
         print "sending the initialize environment/path message"
         time.sleep(1)
         self.defineEnv(20,20,7,10)
-        time.sleep(1)
-        self.defineRobot(0,7,10, self.generatePath(0,20,20,[7,10]))  #robot ID xMax yMax robot_base_point
-        time.sleep(1)
-        self.defineRobot(1,8,10, self.generatePath(1,20,20,[8,10]))
-        time.sleep(1)
-        self.defineRobot(2,9,10, self.generatePath(2,20,20,[9,10]))
-        time.sleep(1)
-        self.defineRobot(3,10,10, self.generatePath(3,20,20,[10,10]))
-        time.sleep(1)
-        self.defineRobot(4,11,10, self.generatePath(4,20,20,[11,10]))
-        time.sleep(1)
-        self.defineRobot(5,12,10, self.generatePath(5,20,20,[12,10]))
-        time.sleep(1)
+        for n in range(0,n_robots):
+            time.sleep(1)
+            self.defineRobot(n,7+n,10, self.generatePath(n,20,20,[7+n,10]))  #robot ID xMax yMax robot_base_point
+
+        # time.sleep(1)
+        # self.defineRobot(1,8,10, self.generatePath(1,20,20,[8,10]))
+        # time.sleep(1)
+        # self.defineRobot(2,9,10, self.generatePath(2,20,20,[9,10]))
+        # time.sleep(1)
+        # self.defineRobot(3,10,10, self.generatePath(3,20,20,[10,10]))
+        # time.sleep(1)
+        # self.defineRobot(4,11,10, self.generatePath(4,20,20,[11,10]))
+        # time.sleep(1)
+        # self.defineRobot(5,12,10, self.generatePath(5,20,20,[12,10]))
+        # time.sleep(1)
         # self.defineRobot(3,6,5, self.generatePath())
         # time.sleep(1)
 

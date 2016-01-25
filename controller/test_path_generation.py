@@ -54,9 +54,52 @@ for n in range(0,n_robots-1):
     path.append(path_temp)
     path_temp=[]
 
-for n in range(0,n_robots):
-    print path[n]
+#for last robot diffrent:
+for x in range(0,xMax):    #trick to fill all the cells
+    for y in range(0,yMax):
+        if not(([x,y] in path[0])or([x,y] in path[1])or([x,y] in path[2])or([x,y] in path[3])or([x,y] in path[4])or([x,y] in path[5])):
+            path_temp.append([x,y])
 
+
+last_robot=[]
+same_x=[]
+flag=0;
+last_robot.append(min(path_temp))
+for i in range(1, len(path_temp)-1):
+    # if flag==0:
+        if path_temp[i][0]-path_temp[i-1][0]==0:
+            last_robot.append(path_temp[i])
+        else:
+            for z in range(0, len(path_temp)):
+                if path_temp[i][0]==path_temp[z][0]: #got same X
+                    same_x.append(path_temp[z])
+            print same_x
+            # for z in range(0, len(same_x)):
+            #     if same_x[z][1]==path_temp[i-1][1]: #look for same Y
+            #         last_robot.append(same_x[z])
+            #         # same_x.remove(same_x[z])
+            for z in range(0, len(same_x)):
+                last_robot.append(max(same_x))
+                path_temp.remove(max(same_x))
+                same_x.remove(max(same_x))
+            same_x=[]
+            flag=1
+        if i>=len(path_temp):
+            break
+
+print path_temp
+print '\n'
+print last_robot
+
+path.append(path_temp) #adding last robot path
+
+
+#
+# for n in range(0,n_robots):
+#     print path[n]
+#
+#
+#
 
 
 
@@ -67,20 +110,20 @@ for y in range(yMax):
     cols = []
 
     for x in range(xMax):
-        if [y,x] in path[0]:
+        if [y,x] in path[6]:
             e = Entry(relief=RIDGE, bg = 'black', justify = 'center',width=3)
-        elif[y,x] in path[1]:
-            e = Entry(relief=RIDGE, bg = 'green', justify = 'center',width=3)
-        elif[y,x] in path[2]:
-            e = Entry(relief=RIDGE, bg = 'red', justify = 'center',width=3)
-        elif[y,x] in path[3]:
-            e = Entry(relief=RIDGE, bg = 'blue', justify = 'center',width=3)
-        elif[y,x] in path[4]:
-            e = Entry(relief=RIDGE, bg = 'yellow', justify = 'center',width=3)
-        elif[y,x] in path[5]:
-            e = Entry(relief=RIDGE, bg = 'magenta', justify = 'center',width=3)
-        elif[y,x] in path[6]:
-            e = Entry(relief=RIDGE, bg = 'cyan', justify = 'center',width=3)
+        # elif[y,x] in path[1]:
+        #     e = Entry(relief=RIDGE, bg = 'green', justify = 'center',width=3)
+        # elif[y,x] in path[2]:
+        #     e = Entry(relief=RIDGE, bg = 'red', justify = 'center',width=3)
+        # elif[y,x] in path[3]:
+        #     e = Entry(relief=RIDGE, bg = 'blue', justify = 'center',width=3)
+        # elif[y,x] in path[4]:
+        #     e = Entry(relief=RIDGE, bg = 'yellow', justify = 'center',width=3)
+        # elif[y,x] in path[5]:
+        #     e = Entry(relief=RIDGE, bg = 'magenta', justify = 'center',width=3)
+        # elif[y,x] in path[6]:
+        #     e = Entry(relief=RIDGE, bg = 'cyan', justify = 'center',width=3)
 
         else:
             e = Entry(relief=RIDGE, justify = 'center',width=3)
