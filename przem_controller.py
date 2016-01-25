@@ -148,8 +148,8 @@ class Controller:
 
         # event with data - dictionary!
         dEvent = self.getDataFromEvent(event)
-        print("Receive Obs event ze:")
-        print(dEvent)
+        # print("Receive Obs event ze:")
+        # print(dEvent)
 
         self.freeOldResource(dEvent)
 
@@ -157,10 +157,12 @@ class Controller:
 
 
     def handleEvents(self):
+        print('HiproEvents:*****************************************')
+        print(str(self.highPrioEvents))
 
-        # check if in highPrioEvents list exist not checked event
+        # check if in highPrioEvents list exists not checked event
         if self.allHighPrioEventsChecked() == False:
-            dEvent = self.highPrioEvents.pop()
+            dEvent = self.highPrioEvents.pop(0)
 
             # flag 'checked' is connected only with highPrioEvents list!
             dEvent['checked'] = True
@@ -168,7 +170,7 @@ class Controller:
 
         else:
             # allHighPrioEventsChecked() == True, so get normal not handled event
-            event = self.notHandledEvents.pop()
+            event = self.notHandledEvents.pop(0)
 
             # event with data - dictionary!
             dEvent = self.getDataFromEvent(event)
@@ -186,7 +188,6 @@ class Controller:
             else:
                 # put this resource in highPrioEvents
                 self.highPrioEvents.append(dEvent)
-                # print("highPro: "+str(self.highPrioEvents))
             print("---")
 
 
@@ -200,10 +201,10 @@ class Controller:
             for dEvent in self.highPrioEvents:
                 if ('checked' in dEvent):
                     if dEvent['checked'] == False:
-                        # print("not checked")
+                        print("{0} not checked").format(dEvent['robotID'])
                         return False
-                    # else:
-                    #     print("checked")
+                    else:
+                        print("{0} checked").format(dEvent['robotID'])
 
                 else:
                     print("Error!")
@@ -269,8 +270,8 @@ class Controller:
         time.sleep(1)
         self.defineRobot(1,6,5, self.generatePath(1))
         time.sleep(1)
-        # self.defineRobot(3,6,5, self.generatePath())
-        # time.sleep(1)
+        self.defineRobot(2,6,5, self.generatePath(2))
+        time.sleep(1)
 
 	 
 def main():

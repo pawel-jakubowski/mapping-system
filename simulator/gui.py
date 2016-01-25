@@ -278,7 +278,9 @@ class Robot:
       half_dist = self.px_size / 2
       if abs(current_delta) < half_dist:
         self.current_resource.update(ResourceState.occupied)
-      elif abs(current_delta) - self.robot.r > half_dist:
+      # elif abs(current_delta) - self.robot.r > half_dist:
+      elif abs(current_delta) - self.robot.r > half_dist and \
+ +      self.current_resource.state != ResourceState.free:
         self.robot.event_callback()
         self.current_resource.update(ResourceState.free)
       if abs(current_delta) + self.robot.r > half_dist:
