@@ -28,7 +28,7 @@ class Robot:
                         break
 
     def sendEvent(self):
-        if self.stage + 1 < len(self.path):
+        if  self.stage + 1 < len(self.path) and (self.stage <= self.current_goal or self.stage == 0):
             self.stage = self.stage + 1
             self.x = self.path[self.stage][0]
             self.y = self.path[self.stage][1]

@@ -42,8 +42,9 @@ class Communication:
 
     def recv_event(self, root, time):
         try:
+            # print("f. recv cont event")
             string = self.socket_con.recv(flags=zmq.NOBLOCK)
-            print(string)
+            # print(string)
             topic, msg = string.split(' ', 1)
             self.robots[int(topic)].recvEvent(msg, root)
         except zmq.error.ZMQError as e:
@@ -81,6 +82,7 @@ class Communication:
     def sendEvent(self, robot_id):
         for r in self.robots:
             if r.id == robot_id:
+                print("Sim send obser. event")
                 print(r.path, r.stage)
                 r.sendEvent()
         print "Get Event from: " + str(robot_id)
@@ -88,4 +90,4 @@ class Communication:
     @staticmethod
     def moveRobot(root, robot_id, x, y):
         root.window.moveRobot(robot_id, x, y)
-        print(robot_id)
+        # print(robot_id)

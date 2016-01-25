@@ -25,6 +25,8 @@ class Controller:
         self.highPrioEvents = []
         self.robotsPaths = []
 
+        self.waitForRecvEvent = True
+
 
     def defineEnv(self,x,y,base_x,base_y):
         env = com.Environment()
@@ -47,9 +49,11 @@ class Controller:
         # temp path
         # path0 = [[5,5], [5,4], [5,3], [5,2], [5,1], [5,0], [6,0]]
         # path1 = [[6,5], [7,5], [8,5], [9,5], [8,5], [7,5], [6,5]]
+        path0 = [[5,5], [5,4], [6,4], [6,3], [5,3], [5,2], [6,2], [6,1], [5,1], [5,0], [6,0]]
+        path1 = [[6,5], [6,4], [6,3], [6,2], [6,1], [6,0], [7,0]]
 
-        path0 = [[7,10], [7,11], [7,12], [7,13], [7,14], [8,14], [9,14], [10,14], [10,15], [10,16]]
-        path1 = [[8,10], [8,11], [8,12], [8,13], [8,14], [8,15], [8,16]]
+        # path0 = [[7,10], [7,11], [7,12], [7,13], [7,14], [8,14], [9,14], [10,14], [10,15], [10,16]]
+        # path1 = [[8,10], [8,11], [8,12], [8,13], [8,14], [8,15], [8,16]]
 
 
         if robotID == 0:
@@ -74,24 +78,6 @@ class Controller:
         return x,y
 
 
-    # def checkIfFuturePosIsFree(self, dEvent):
-    #     currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
-    #     futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
-    #     oldX, oldY = self.getCoordFromPath(dEvent['robotID'], dEvent['oldStage'])
-    #     oldStage = dEvent['oldStage']
-    #
-    #     # check if future stage is free
-    #     if self.stateMatrix[futureY][futureX] == 0:
-    #         # take new resource
-    #         self.stateMatrix[futureY][futureX] = 1
-    #         print("R{0} zajmuje: {1} {2}".format(dEvent['robotID'], futureX, futureY))
-    #         return True
-    #
-    #     # resource is occupied
-    #     else:
-    #         print("R{0} {1} {2} resource is occupied!".format(dEvent['robotID'], futureX, futureY))
-    #         return False
-
     def checkIfFuturePosIsFree(self, dEvent):
         futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
         if self.stateMatrix[futureY][futureX] == 0:
@@ -103,6 +89,7 @@ class Controller:
     def takeFutureResorce(self, dEvent):
         futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
         self.stateMatrix[futureY][futureX] = 1
+        print("R{0} zajmuje: {1} {2} - future".format(dEvent['robotID'], futureX, futureY))
 
     def freeOldResource(self, dEvent):
         oldX, oldY = self.getCoordFromPath(dEvent['robotID'], dEvent['oldStage'])
@@ -116,6 +103,7 @@ class Controller:
     def takeCurrentResource(self, dEvent):
         currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
         self.stateMatrix[currentY][currentX] = 1
+        print("R{0} zajmuje: {1} {2} - current".format(dEvent['robotID'], currentX, currentY))
 
 
 
@@ -133,7 +121,23 @@ class Controller:
     #         self.stateMatrix[oldY][oldX] = 0
     #         print("R{0} zwalniam: {1} {2}".format(dEvent['robotID'], oldX, oldY))
 
-
+    # def checkIfFuturePosIsFree(self, dEvent):
+    #     currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
+    #     futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
+    #     oldX, oldY = self.getCoordFromPath(dEvent['robotID'], dEvent['oldStage'])
+    #     oldStage = dEvent['oldStage']
+    #
+    #     # check if future stage is free
+    #     if self.stateMatrix[futureY][futureX] == 0:
+    #         # take new resource
+    #         self.stateMatrix[futureY][futureX] = 1
+    #         print("R{0} zajmuje: {1} {2}".format(dEvent['robotID'], futureX, futureY))
+    #         return True
+    #
+    #     # resource is occupied
+    #     else:
+    #         print("R{0} {1} {2} resource is occupied!".format(dEvent['robotID'], futureX, futureY))
+    #         return False
 
 
     def defineRobot(self, robotId, robotX0, robotY0, robotPath):#define how many robots should be created
@@ -158,7 +162,14 @@ class Controller:
         event = com.Event()
         event.ParseFromString(msg)
 
-        print("Event obser!")
+
+        # event with data - dictionary!
+        dEvent = self.getDataFromEvent(event)
+        print("Receive Obs event ze:")
+        print(dEvent)
+
+        self.takeCurrentResource(dEvent)
+        self.freeOldResource(dEvent)
 
         self.notHandledEvents.append(event)
 
@@ -171,6 +182,7 @@ class Controller:
 
             # flag 'checked' is connected only with highPrioEvents list!
             dEvent['checked'] = True
+            self.waitForRecvEvent = False
 
         else:
             # allHighPrioEventsChecked() == True, so get normal not handled event
@@ -181,17 +193,20 @@ class Controller:
 
             # set flag 'checked' to False
             self.rmHighPrioCheckedFlag()
+            self.waitForRecvEvent = True
 
+        print("+++")
         self.takeCurrentResource(dEvent)
-        self.freeOldResource(dEvent)
+        # self.freeOldResource(dEvent)
         # if resource is free, we are able to handle this event
         if self.checkIfFuturePosIsFree(dEvent) == True:
             self.takeFutureResorce(dEvent)
-            self.sendContEvent(dEvent['robotID'], 1)
+            self.sendContEvent(dEvent['robotID'], dEvent['futureStage'])
         else:
             # put this resource in highPrioEvents
             self.highPrioEvents.append(dEvent)
-
+            # print("highPro: "+str(self.highPrioEvents))
+        print("---")
 
 
     def allHighPrioEventsChecked(self):
@@ -204,10 +219,10 @@ class Controller:
             for dEvent in self.highPrioEvents:
                 if ('checked' in dEvent):
                     if dEvent['checked'] == False:
-                        print("not checked")
+                        # print("not checked")
                         return False
-                    else:
-                        print("checked")
+                    # else:
+                    #     print("checked")
 
                 else:
                     print("Error!")
@@ -256,8 +271,8 @@ class Controller:
         event.stage = 1
 
         msg = event.SerializeToString()
-        if self.socket_con.send("%d %s" % (event.robot, msg)) == True:
-            print "Robot {0} send control event".format(robot)
+        self.socket_con.send("%d %s" % (event.robot, msg))
+        print "Robot {0} send control event".format(robot)
 
 
 
@@ -266,11 +281,12 @@ class Controller:
         # wysylamy sciezki kazdego robota na poczatku do symulatora
         print "sending the initialize environment/path message"
         time.sleep(1)
-        self.defineEnv(20,20,7,10)
+        # self.defineEnv(20,20,7,10)
+        self.defineEnv(10,10,5,6)
         time.sleep(1)
-        self.defineRobot(0,7,10, self.generatePath(0))
+        self.defineRobot(0,5,5, self.generatePath(0))
         time.sleep(1)
-        self.defineRobot(1,8,10, self.generatePath(1))
+        self.defineRobot(1,6,5, self.generatePath(1))
         time.sleep(1)
         # self.defineRobot(3,6,5, self.generatePath())
         # time.sleep(1)
@@ -287,7 +303,8 @@ def main():
 
     while True:
             # print("1")
-            controller.receiveEvents()
+            if controller.waitForRecvEvent == True:
+                controller.receiveEvents()
             # print("2")
             controller.handleEvents()
             # print("3")
