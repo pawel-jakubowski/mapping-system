@@ -43,6 +43,30 @@ class Controller:
         self.stateMatrix = [[0 for x in range(env.x)] for x in range(env.y)]
 
 
+    # def generatePath(self, robotID):
+    #     # place for magic path generator
+    #     # temp path
+    #     # path0 = [[5,5], [5,4], [5,3], [5,2], [5,1], [5,0], [6,0]]
+    #     # path1 = [[6,5], [7,5], [8,5], [9,5], [8,5], [7,5], [6,5]]
+    #     path0 = [[5,5], [5,4], [6,4], [6,3], [5,3], [5,2], [6,2], [6,1], [5,1], [5,0], [6,0]]
+    #     path1 = [[6,5], [6,4], [6,3], [6,2], [6,1], [6,0], [7,0]]
+    #
+    #     # path0 = [[7,10], [7,11], [7,12], [7,13], [7,14], [8,14], [9,14], [10,14], [10,15], [10,16]]
+    #     # path1 = [[8,10], [8,11], [8,12], [8,13], [8,14], [8,15], [8,16]]
+    #
+    #
+    #     if robotID == 0:
+    #         tempPath = {'robotID': robotID, 'path':path0}
+    #     else:
+    #         tempPath = {'robotID': robotID, 'path':path1}
+    #
+    #     # remember path in robotsPaths dict!
+    #     self.robotsPaths.append(tempPath)
+    #     if robotID == 0:
+    #         return path0
+    #     else:
+    #         return path1
+
     def generatePath(self,robotID,xMax,yMax,base):
         # place for magic path generator
         path_temp=[]
