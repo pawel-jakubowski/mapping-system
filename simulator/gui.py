@@ -13,7 +13,15 @@ class Window:
     root.window = self
     root.title(self.title)
     # root.minsize(width=900, height=780)
+
+  def testMode(self):
     self.addButtons()
+    self.addBoard(20)
+    self.board.setBase([7,10],[11,10])
+    self.board.addRobot(0, 7, 10)
+    self.board.addRobot(1, 9, 10)
+    self.board.addRobot(2, 11, 10)
+    self.board.refresh()
 
   def moveRobot(self, id, x, y):
     self.board.robots[id].moveX(x)
@@ -29,7 +37,7 @@ class Window:
   def addButtons(self):
     self.frames['buttons'] = tk.Frame(self.root)
     self.frames['buttons'].grid(row=0, column=0, sticky=tk.N)
-    self.buttons.append(tk.Button(self.frames['buttons'], text="Run"))
+    # self.buttons.append(tk.Button(self.frames['buttons'], text="Run"))
     self.buttons.append(
       tk.Button(self.frames['buttons'], text="Up", command=lambda: self.moveRobots(0, -1)))
     self.buttons.append(
