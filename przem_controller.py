@@ -77,18 +77,22 @@ class Controller:
         y = path[stage][1]
         return x,y
 
-
     def checkIfFuturePosIsFree(self, dEvent):
         futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
+        currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
         if self.stateMatrix[futureY][futureX] == 0:
             return True
         else:
+            print("R{0} jestem w: {1} {2} - current".format(dEvent['robotID'], currentX, currentY))
             print("R{0} {1} {2} resource is occupied!".format(dEvent['robotID'], futureX, futureY))
             return False
 
     def takeFutureResorce(self, dEvent):
         futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
+        currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
         self.stateMatrix[futureY][futureX] = 1
+
+        print("R{0} jestem w: {1} {2} - current".format(dEvent['robotID'], currentX, currentY))
         print("R{0} zajmuje: {1} {2} - future".format(dEvent['robotID'], futureX, futureY))
 
     def freeOldResource(self, dEvent):
@@ -100,44 +104,6 @@ class Controller:
             self.stateMatrix[oldY][oldX] = 0
             print("R{0} zwalniam: {1} {2}".format(dEvent['robotID'], oldX, oldY))
 
-    def takeCurrentResource(self, dEvent):
-        currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
-        self.stateMatrix[currentY][currentX] = 1
-        print("R{0} zajmuje: {1} {2} - current".format(dEvent['robotID'], currentX, currentY))
-
-
-
-    # def updateState(self, dEvent):
-    #     currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
-    #     futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
-    #     oldX, oldY = self.getCoordFromPath(dEvent['robotID'], dEvent['oldStage'])
-    #     oldStage = dEvent['oldStage']
-    #
-    #     print(self.stateMatrix)
-    #     print("R{0} jestem w : {1} {2}".format(dEvent['robotID'], currentX, currentY))
-    #
-    #     # free old resource
-    #     if oldStage >= 0:
-    #         self.stateMatrix[oldY][oldX] = 0
-    #         print("R{0} zwalniam: {1} {2}".format(dEvent['robotID'], oldX, oldY))
-
-    # def checkIfFuturePosIsFree(self, dEvent):
-    #     currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
-    #     futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
-    #     oldX, oldY = self.getCoordFromPath(dEvent['robotID'], dEvent['oldStage'])
-    #     oldStage = dEvent['oldStage']
-    #
-    #     # check if future stage is free
-    #     if self.stateMatrix[futureY][futureX] == 0:
-    #         # take new resource
-    #         self.stateMatrix[futureY][futureX] = 1
-    #         print("R{0} zajmuje: {1} {2}".format(dEvent['robotID'], futureX, futureY))
-    #         return True
-    #
-    #     # resource is occupied
-    #     else:
-    #         print("R{0} {1} {2} resource is occupied!".format(dEvent['robotID'], futureX, futureY))
-    #         return False
 
 
     def defineRobot(self, robotId, robotX0, robotY0, robotPath):#define how many robots should be created
@@ -168,7 +134,6 @@ class Controller:
         print("Receive Obs event ze:")
         print(dEvent)
 
-        self.takeCurrentResource(dEvent)
         self.freeOldResource(dEvent)
 
         self.notHandledEvents.append(event)
@@ -196,8 +161,7 @@ class Controller:
             self.waitForRecvEvent = True
 
         print("+++")
-        self.takeCurrentResource(dEvent)
-        # self.freeOldResource(dEvent)
+
         # if resource is free, we are able to handle this event
         if self.checkIfFuturePosIsFree(dEvent) == True:
             self.takeFutureResorce(dEvent)
@@ -297,9 +261,6 @@ def main():
     time.sleep(1)
     controller.sendEnvMsg()
     time.sleep(5)
-
-    # controller.sendContEvent(1,1)
-    # controller.sendContEvent(2,1)
 
     while True:
             # print("1")
