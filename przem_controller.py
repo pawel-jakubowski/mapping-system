@@ -217,7 +217,7 @@ class Controller:
 
         # check if in highPrioEvents list exist not checked event
         if self.allHighPrioEventsChecked() == False:
-            dEvent = self.highPrioEvents.pop()
+            dEvent = self.highPrioEvents.pop(0)
 
             # flag 'checked' is connected only with highPrioEvents list!
             dEvent['checked'] = True
@@ -225,7 +225,7 @@ class Controller:
 
         else:
             # allHighPrioEventsChecked() == True, so get normal not handled event
-            event = self.notHandledEvents.pop()
+            event = self.notHandledEvents.pop(0)
 
             # event with data - dictionary!
             dEvent = self.getDataFromEvent(event)
