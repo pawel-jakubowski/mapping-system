@@ -73,19 +73,36 @@ class Controller:
         # robotID-1 because index list starts from 0, we are num. robots from 1
         id = self.robotsPaths[robotID]['robotID']
         path = self.robotsPaths[robotID]['path']
+
         x = path[stage][0]
         y = path[stage][1]
         return x,y
 
+
+    def getNumOfStages(self, robotID):
+        # we are conting stages from 0
+        nStages = len(self.robotsPaths[robotID]['path']) - 1
+        return nStages
+
+
+    def isThisLastStage(self, dEvent):
+        if dEvent['currentStage'] == self.getNumOfStages(dEvent['robotID']):
+            return True
+        else:
+            return False
+
+
     def checkIfFuturePosIsFree(self, dEvent):
-        futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
         currentX, currentY = self.getCoordFromPath(dEvent['robotID'], dEvent['currentStage'])
+        futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
+
         if self.stateMatrix[futureY][futureX] == 0:
             return True
         else:
             print("R{0} jestem w: {1} {2} - current".format(dEvent['robotID'], currentX, currentY))
             print("R{0} {1} {2} resource is occupied!".format(dEvent['robotID'], futureX, futureY))
             return False
+
 
     def takeFutureResorce(self, dEvent):
         futureX, futureY = self.getCoordFromPath(dEvent['robotID'], dEvent['futureStage'])
@@ -95,6 +112,7 @@ class Controller:
         print("R{0} jestem w: {1} {2} - current".format(dEvent['robotID'], currentX, currentY))
         print("R{0} zajmuje: {1} {2} - future".format(dEvent['robotID'], futureX, futureY))
 
+
     def freeOldResource(self, dEvent):
         oldX, oldY = self.getCoordFromPath(dEvent['robotID'], dEvent['oldStage'])
         oldStage = dEvent['oldStage']
@@ -103,7 +121,6 @@ class Controller:
         if oldStage >= 0:
             self.stateMatrix[oldY][oldX] = 0
             print("R{0} zwalniam: {1} {2}".format(dEvent['robotID'], oldX, oldY))
-
 
 
     def defineRobot(self, robotId, robotX0, robotY0, robotPath):#define how many robots should be created
@@ -161,16 +178,16 @@ class Controller:
             self.waitForRecvEvent = True
 
         print("+++")
-
-        # if resource is free, we are able to handle this event
-        if self.checkIfFuturePosIsFree(dEvent) == True:
-            self.takeFutureResorce(dEvent)
-            self.sendContEvent(dEvent['robotID'], dEvent['futureStage'])
-        else:
-            # put this resource in highPrioEvents
-            self.highPrioEvents.append(dEvent)
-            # print("highPro: "+str(self.highPrioEvents))
-        print("---")
+        if self.isThisLastStage(dEvent) == False:
+            # if resource is free, we are able to handle this event
+            if self.checkIfFuturePosIsFree(dEvent) == True:
+                self.takeFutureResorce(dEvent)
+                self.sendContEvent(dEvent['robotID'], dEvent['futureStage'])
+            else:
+                # put this resource in highPrioEvents
+                self.highPrioEvents.append(dEvent)
+                # print("highPro: "+str(self.highPrioEvents))
+            print("---")
 
 
     def allHighPrioEventsChecked(self):

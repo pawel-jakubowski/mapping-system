@@ -42,7 +42,7 @@ class Robot:
                 print("%d my stage: %d" % (self.id, self.stage))
                 event = com.Event()
                 event.robot = self.id
-                event.stage = self.stage
+                event.stage = self.stage + 1
                 msg = event.SerializeToString()
                 self.socket_pub.send("%d %s" % (self.id, msg))
 
