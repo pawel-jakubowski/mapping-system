@@ -10,9 +10,9 @@ def main():
 
     # Initialization
     # TODO: do after obtaining parameters from controller
-    gui.window.addBoard(10)
-    #gui.window.board.setBase([7,10],[11,10])
-    gui.window.board.setBase([5,5],[6,5])
+    gui.window.addBoard(20)
+    gui.window.board.setBase([7,10],[12,10])
+    # gui.window.board.setBase([5,5],[6,5])
 
     # Init robots
     # gui.window.board.addRobot(0, 7, 10)
