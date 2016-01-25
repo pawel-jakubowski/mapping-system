@@ -80,6 +80,21 @@ class Controller:
         lastY=path_temp[-1][1]
         for i in range (1,1+base[1]-n):
             path_temp.append([lastX,lastY+i])
+        
+        if robotID == n_robots-1:
+            path_temp.append(base)
+            for z in range(0,base[0]-(base[0]-n_robots)+1):
+                for i in range(1,yMax-base[1]):  #czyli od punktu bazowego do samego dolu
+                    path_temp.append([path_temp[-1][0],path_temp[-1][1]+1]) #x sie nie zmienia
+                path_temp.append([path_temp[-1][0]-1,path_temp[-1][1]]) #x sie nie zmienia
+                for i in range(0,yMax-base[1]-1):  #czyli od punktu bazowego do samego dolu
+                    path_temp.append([path_temp[-1][0],path_temp[-1][1]-1]) #x sie nie zmienia
+            for i in range(0,yMax-path_temp[-1][1]):
+                path_temp.append([path_temp[-1][0],path_temp[-1][1]-1]) #x sie nie zmienia
+            for i in range(0,base[0]-path_temp[-1][0]):
+                path_temp.append([path_temp[-1][0]+1,path_temp[-1][1]]) #x sie nie zmienia
+            for i in range(0,base[1]-path_temp[-1][1]):
+                path_temp.append([path_temp[-1][0],path_temp[-1][1]+1]) #x sie nie zmienia
 
 
         #path0 = [[7, 10], [7, 9], [7, 8], [7, 7], [7, 6], [7, 5], [7, 4], [7, 3], [7, 2], [7, 1], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 0], [16, 0], [17, 0], [18, 0], [19, 0], [19, 1], [19, 2], [19, 3], [19, 4], [19, 5], [19, 6], [19, 7], [19, 8], [19, 9], [19, 10], [19, 11], [19, 12], [19, 13], [19, 14], [19, 15], [19, 16], [19, 17], [19, 18], [19, 19], [18, 19], [17, 19], [16, 19], [15, 19], [14, 19], [13, 19], [12, 19], [11, 19], [10, 19], [9, 19], [8, 19], [7, 19], [6, 19], [5, 19], [4, 19], [3, 19], [2, 19], [1, 19], [0, 19], [0, 18], [0, 17], [0, 16], [0, 15], [0, 14], [0, 13], [0, 12], [0, 11], [0, 10], [0, 9], [0, 8], [0, 7], [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1], [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8], [7, 9], [7, 10]]
@@ -301,7 +316,8 @@ class Controller:
     def sendEnvMsg(self):
         # ta wiadmosc wysyalana jest tylko jeden raz
         # wysylamy sciezki kazdego robota na poczatku do symulatora
-        n_robots=6 #total number of robots [will use it in path generation] could be a global?
+        global n_robots #total number of robots [will use it in path generation] could be a global?
+        n_robots=6
         print "sending the initialize environment/path message"
         time.sleep(1)
         self.defineEnv(20,20,7,10)
