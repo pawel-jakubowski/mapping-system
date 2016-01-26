@@ -1,8 +1,8 @@
-import communication_pb2 as com
+from proto import  communication_pb2 as com
 
 
 class Robot:
-    def __init__(self, id, x, y, size, socket_pub, socket_sub, speed=2,
+    def __init__(self, id, x, y, socket_pub, socket_sub, speed=2,
                  path=[]):
         self.id = id
         self.x = x

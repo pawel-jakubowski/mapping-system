@@ -13,7 +13,15 @@ class Window:
     root.window = self
     root.title(self.title)
     # root.minsize(width=900, height=780)
+
+  def testMode(self):
     self.addButtons()
+    self.addBoard(20)
+    self.board.setBase([7,10],[11,10])
+    self.board.addRobot(0, 7, 10)
+    self.board.addRobot(1, 9, 10)
+    self.board.addRobot(2, 11, 10)
+    self.board.refresh()
 
   def moveRobot(self, id, x, y):
     self.board.robots[id].moveX(x)
@@ -29,7 +37,7 @@ class Window:
   def addButtons(self):
     self.frames['buttons'] = tk.Frame(self.root)
     self.frames['buttons'].grid(row=0, column=0, sticky=tk.N)
-    self.buttons.append(tk.Button(self.frames['buttons'], text="Run"))
+    # self.buttons.append(tk.Button(self.frames['buttons'], text="Run"))
     self.buttons.append(
       tk.Button(self.frames['buttons'], text="Up", command=lambda: self.moveRobots(0, -1)))
     self.buttons.append(
@@ -94,7 +102,7 @@ class Board:
     print "Base:"
     for x in range(minPoint[0], maxPoint[0]+1):
       for y in range(minPoint[1], maxPoint[1]+1):
-        self.resources[x][y].update(ResourceState.base)
+        self.resources[x][y].isBase = True
 
   def addRobot(self, robotId, x, y, speed = 5):
     assert x >= 0 and x < self.size, "x must be inside board!"
@@ -124,11 +132,12 @@ class ResourceState(Enum):
   free = 1
   occupied = 2
   requested = 3
-  base = 4
 
 
 class Resource:
   state = ResourceState.free
+  isBase = False
+  free_color = "transparent"
 
   def __init__(self, x, y, canvas, state=ResourceState.free):
     self.x = x
@@ -144,14 +153,23 @@ class Resource:
     self.item = self.canvas.create_rectangle(self.x[0], self.y[0], self.x[1], self.y[1],
                                              outline="black", fill=color)
 
+  def setMapped(self):
+    self.free_color = "light sky blue"
+
   def getBackgroundColor(self):
-    color = self.canvas["background"]
+    if self.isBase:
+      return "snow3"
+
+    if self.free_color == "transparent":
+      color = self.canvas["background"]
+    else:
+      color = self.free_color
+
     if self.state == ResourceState.occupied:
       color = "brown1"
     elif self.state == ResourceState.requested:
       color = "light cyan"
-    elif self.state == ResourceState.base:
-      color = "snow3"
+
     return color
 
   def drawCenter(self):
@@ -161,8 +179,10 @@ class Resource:
     self.canvas.create_oval(center_x - r, center_y - r, center_x + r, center_y + r)
 
   def update(self, state):
-    if self.state != ResourceState.base:
-      self.state = state
+    self.state = state
+    if state == ResourceState.occupied:
+      self.setMapped()
+
     try:
       color = self.getBackgroundColor()
       self.canvas.itemconfig(self.item, fill=color)
@@ -172,7 +192,7 @@ class Resource:
 
 class Robot:
   speed = 5
-  color = "light blue"
+  color = "light sky blue"
 
   def __init__(self, id, x, y, size, board, canvas):
     self.id = id
@@ -280,7 +300,7 @@ class Robot:
         self.current_resource.update(ResourceState.occupied)
       # elif abs(current_delta) - self.robot.r > half_dist:
       elif abs(current_delta) - self.robot.r > half_dist and \
- +      self.current_resource.state != ResourceState.free:
+          self.current_resource.state != ResourceState.free:
         self.robot.event_callback()
         self.current_resource.update(ResourceState.free)
       if abs(current_delta) + self.robot.r > half_dist:

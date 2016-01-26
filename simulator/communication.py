@@ -1,7 +1,7 @@
 import zmq
 # import time
 import model
-import communication_pb2 as com
+from proto import communication_pb2 as com
 import time as t
 
 
@@ -31,7 +31,7 @@ class Communication:
             if topic == "add_robot":
                 self.addRobot(msg, root, time)
             elif topic == "environment":
-                self.initEnvironment(msg)
+                self.initEnvironment(msg, root)
         except zmq.error.ZMQError as e:
             if 'Resource temporarily unavailable' in str(e):
                 pass
@@ -63,7 +63,7 @@ class Communication:
             stage = (s.x, s.y)
             path.append(stage)
         robot = model.Robot(robot_msg.id, robot_msg.posX, robot_msg.posY,
-                            robot_msg.size, self.socket_obs, self.socket_con,
+                            self.socket_obs, self.socket_con,
                             robot_msg.speed, path)
         robot.addMoveCallback(self.moveRobot)
         self.robots.append(robot)
@@ -74,10 +74,13 @@ class Communication:
         print("Robot created")
         robot.sendEvent()
 
-    def initEnvironment(self, msg):
+    def initEnvironment(self, msg, root):
         env_msg = com.Environment()
         env_msg.ParseFromString(msg)
         print(env_msg)
+
+        root.window.addBoard(env_msg.size)
+        root.window.board.setBase([env_msg.baseStartX,env_msg.baseStartY],[env_msg.baseEndX,env_msg.baseEndY])
 
     def sendEvent(self, robot_id):
         for r in self.robots:

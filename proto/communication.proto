@@ -1,10 +1,11 @@
 package communication;
 
 message Environment {
-    required int32 x = 1; // map size x
-    required int32 y = 2; // map size y
-    required int32 baseX = 3; // base pos
-    required int32 baseY = 4;
+    required int32 size = 1; // map size
+    required int32 baseStartX = 2; // base pos
+    required int32 baseStartY = 3;
+    required int32 baseEndX = 4;
+    required int32 baseEndY = 5;
 }
 
 message Event {
@@ -17,17 +18,16 @@ message Path {
 
     message Stage {
         required int32 x = 1; //next robot pos
-        required int32 y = 2; 
+        required int32 y = 2;
     }
     repeated Stage stage = 2;
 }
 
 message Robot {	// robot init msg
     required int32 id = 1;
-    required int32 posX = 2; //  init robot pos 
-    required int32 posY = 3; 
-    required double size = 4;
-    optional double speed = 5 [default = 2]; 
+    required int32 posX = 2; //  init robot pos
+    required int32 posY = 3;
+    optional double speed = 4 [default = 2];
 
     optional Path path = 6;
 }
