@@ -137,6 +137,7 @@ class ResourceState(Enum):
 
 class Resource:
   state = ResourceState.free
+  free_color = "transparent"
 
   def __init__(self, x, y, canvas, state=ResourceState.free):
     self.x = x
@@ -152,8 +153,14 @@ class Resource:
     self.item = self.canvas.create_rectangle(self.x[0], self.y[0], self.x[1], self.y[1],
                                              outline="black", fill=color)
 
+  def setMapped(self):
+    self.free_color = "light sky blue"
+
   def getBackgroundColor(self):
-    color = self.canvas["background"]
+    if self.free_color == "transparent":
+      color = self.canvas["background"]
+    else:
+      color = self.free_color
     if self.state == ResourceState.occupied:
       color = "brown1"
     elif self.state == ResourceState.requested:
@@ -171,6 +178,8 @@ class Resource:
   def update(self, state):
     if self.state != ResourceState.base:
       self.state = state
+      if state == ResourceState.occupied:
+        self.setMapped()
     try:
       color = self.getBackgroundColor()
       self.canvas.itemconfig(self.item, fill=color)
