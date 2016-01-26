@@ -17,14 +17,12 @@ def main():
         app.testMode()
     else:
         # TODO: do after obtaining parameters from controller
-        gui.window.addBoard(20)
-        gui.window.board.setBase([7,10],[12,10])
 
         com = c.Communication()
         time = 1
         gui.after(time, com.recv_msg, gui, time)
         gui.after(time, com.recv_event, gui, time)
-        
+
     gui.mainloop()
 
 if __name__ == '__main__':

@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='communication.proto',
   package='communication',
-  serialized_pb=_b('\n\x13\x63ommunication.proto\x12\rcommunication\"A\n\x0b\x45nvironment\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\x12\r\n\x05\x62\x61seX\x18\x03 \x02(\x05\x12\r\n\x05\x62\x61seY\x18\x04 \x02(\x05\"%\n\x05\x45vent\x12\r\n\x05robot\x18\x01 \x02(\x05\x12\r\n\x05stage\x18\x02 \x02(\x05\"^\n\x04Path\x12\r\n\x05robot\x18\x01 \x01(\x05\x12(\n\x05stage\x18\x02 \x03(\x0b\x32\x19.communication.Path.Stage\x1a\x1d\n\x05Stage\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\"r\n\x05Robot\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04posX\x18\x02 \x02(\x05\x12\x0c\n\x04posY\x18\x03 \x02(\x05\x12\x0c\n\x04size\x18\x04 \x02(\x01\x12\x10\n\x05speed\x18\x05 \x01(\x01:\x01\x32\x12!\n\x04path\x18\x06 \x01(\x0b\x32\x13.communication.Path')
+  serialized_pb=_b('\n\x13\x63ommunication.proto\x12\rcommunication\"g\n\x0b\x45nvironment\x12\x0c\n\x04size\x18\x01 \x02(\x05\x12\x12\n\nbaseStartX\x18\x02 \x02(\x05\x12\x12\n\nbaseStartY\x18\x03 \x02(\x05\x12\x10\n\x08\x62\x61seEndX\x18\x04 \x02(\x05\x12\x10\n\x08\x62\x61seEndY\x18\x05 \x02(\x05\"%\n\x05\x45vent\x12\r\n\x05robot\x18\x01 \x02(\x05\x12\r\n\x05stage\x18\x02 \x02(\x05\"^\n\x04Path\x12\r\n\x05robot\x18\x01 \x01(\x05\x12(\n\x05stage\x18\x02 \x03(\x0b\x32\x19.communication.Path.Stage\x1a\x1d\n\x05Stage\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\"r\n\x05Robot\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04posX\x18\x02 \x02(\x05\x12\x0c\n\x04posY\x18\x03 \x02(\x05\x12\x0c\n\x04size\x18\x04 \x02(\x01\x12\x10\n\x05speed\x18\x05 \x01(\x01:\x01\x32\x12!\n\x04path\x18\x06 \x01(\x0b\x32\x13.communication.Path')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -33,29 +33,36 @@ _ENVIRONMENT = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='x', full_name='communication.Environment.x', index=0,
+      name='size', full_name='communication.Environment.size', index=0,
       number=1, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='y', full_name='communication.Environment.y', index=1,
+      name='baseStartX', full_name='communication.Environment.baseStartX', index=1,
       number=2, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='baseX', full_name='communication.Environment.baseX', index=2,
+      name='baseStartY', full_name='communication.Environment.baseStartY', index=2,
       number=3, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='baseY', full_name='communication.Environment.baseY', index=3,
+      name='baseEndX', full_name='communication.Environment.baseEndX', index=3,
       number=4, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='baseEndY', full_name='communication.Environment.baseEndY', index=4,
+      number=5, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -72,7 +79,7 @@ _ENVIRONMENT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=38,
-  serialized_end=103,
+  serialized_end=141,
 )
 
 
@@ -108,8 +115,8 @@ _EVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=105,
-  serialized_end=142,
+  serialized_start=143,
+  serialized_end=180,
 )
 
 
@@ -145,8 +152,8 @@ _PATH_STAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=209,
-  serialized_end=238,
+  serialized_start=247,
+  serialized_end=276,
 )
 
 _PATH = _descriptor.Descriptor(
@@ -181,8 +188,8 @@ _PATH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=144,
-  serialized_end=238,
+  serialized_start=182,
+  serialized_end=276,
 )
 
 
@@ -246,8 +253,8 @@ _ROBOT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=240,
-  serialized_end=354,
+  serialized_start=278,
+  serialized_end=392,
 )
 
 _PATH_STAGE.containing_type = _PATH

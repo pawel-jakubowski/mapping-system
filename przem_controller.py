@@ -27,20 +27,20 @@ class Controller:
         self.waitForRecvEvent = True
 
 
-    def defineEnv(self,x,y,base_x,base_y):
+    def defineEnv(self,size,base_start,base_end):
         env = com.Environment()
-        env.x = x
-        env.y = y
-        env.baseX = base_x
-        env.baseY = base_y
+        env.size = size
+        env.baseStartX = base_start[0]
+        env.baseStartY = base_start[1]
+        env.baseEndX = base_end[0]
+        env.baseEndY = base_end[1]
         msg = env.SerializeToString()
         self.socket_pub.send("environment %s" % msg)
 
         # definition of state with free and occupied resources
-        print("envx " + str(env.x))
-        print("envy" + str(env.y))
+        print("env " + str(env.size))
 
-        self.stateMatrix = [[0 for x in range(env.x)] for x in range(env.y)]
+        self.stateMatrix = [[0 for x in range(env.size)] for x in range(env.size)]
 
 
     # def generatePath(self, robotID):
@@ -322,7 +322,7 @@ class Controller:
         n_robots=6
         print "sending the initialize environment/path message"
         time.sleep(1)
-        self.defineEnv(20,20,7,10)
+        self.defineEnv(20,[7,10],[12,10])
         for n in range(0,n_robots):
             time.sleep(1)
             #robot ID xMax yMax robot_base_point
