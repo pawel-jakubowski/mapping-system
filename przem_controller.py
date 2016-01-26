@@ -1,7 +1,8 @@
 import zmq
 import time
-import argparse
-from proto import communication_pb2 as com
+from requests.utils import get_environ_proxies
+
+import communication_pb2 as com
 
 
 class Controller:
@@ -27,108 +28,45 @@ class Controller:
         self.waitForRecvEvent = True
 
 
-    def defineEnv(self,size,base_start,base_end):
+    def defineEnv(self,x,y,base_x,base_y):
         env = com.Environment()
-        env.size = size
-        env.baseStartX = base_start[0]
-        env.baseStartY = base_start[1]
-        env.baseEndX = base_end[0]
-        env.baseEndY = base_end[1]
+        env.x = x
+        env.y = y
+        env.baseX = base_x
+        env.baseY = base_y
         msg = env.SerializeToString()
         self.socket_pub.send("environment %s" % msg)
 
         # definition of state with free and occupied resources
-        print("env " + str(env.size))
+        print("envx " + str(env.x))
+        print("envy" + str(env.y))
 
-        self.stateMatrix = [[0 for x in range(env.size)] for x in range(env.size)]
+        self.stateMatrix = [[0 for x in range(env.x)] for x in range(env.y)]
 
 
-    # def generatePath(self, robotID):
-    #     # place for magic path generator
-    #     # temp path
-    #     # path0 = [[5,5], [5,4], [5,3], [5,2], [5,1], [5,0], [6,0]]
-    #     # path1 = [[6,5], [7,5], [8,5], [9,5], [8,5], [7,5], [6,5]]
-    #     path0 = [[5,5], [5,4], [6,4], [6,3], [5,3], [5,2], [6,2], [6,1], [5,1], [5,0], [6,0]]
-    #     path1 = [[6,5], [6,4], [6,3], [6,2], [6,1], [6,0], [7,0]]
-    #
-    #     # path0 = [[7,10], [7,11], [7,12], [7,13], [7,14], [8,14], [9,14], [10,14], [10,15], [10,16]]
-    #     # path1 = [[8,10], [8,11], [8,12], [8,13], [8,14], [8,15], [8,16]]
-    #
-    #
-    #     if robotID == 0:
-    #         tempPath = {'robotID': robotID, 'path':path0}
-    #     else:
-    #         tempPath = {'robotID': robotID, 'path':path1}
-    #
-    #     # remember path in robotsPaths dict!
-    #     self.robotsPaths.append(tempPath)
-    #     if robotID == 0:
-    #         return path0
-    #     else:
-    #         return path1
-
-    def generatePath(self,robotID,xMax,yMax,base):
+    def generatePath(self, robotID):
         # place for magic path generator
-        path_temp=[]
-        n=robotID
-        # for now just spirale around whole map
-        for i in range(0,base[1]+1-n):  #czyli od punktu bazowego do zera
-            path_temp.append([base[0],base[1]-i]) #x sie nie zmienia
+        # temp path
+        # path0 = [[5,5], [5,4], [5,3], [5,2], [5,1], [5,0], [6,0]]
+        # path1 = [[6,5], [7,5], [8,5], [9,5], [8,5], [7,5], [6,5]]
+        path0 = [[5,5], [5,4], [6,4], [6,3], [5,3], [5,2], [6,2], [6,1], [5,1], [5,0], [6,0]]
+        path1 = [[6,5], [6,4], [6,3], [6,2], [6,1], [6,0], [7,0]]
 
-        lastX=path_temp[-1][0]
-        lastY=path_temp[-1][1]
-        for i in range (1,(xMax)-path_temp[-1][0]-n):  #w prawo do konca
-            path_temp.append([lastX+i,lastY])
+        # path0 = [[7,10], [7,11], [7,12], [7,13], [7,14], [8,14], [9,14], [10,14], [10,15], [10,16]]
+        # path1 = [[8,10], [8,11], [8,12], [8,13], [8,14], [8,15], [8,16]]
 
-        lastX=path_temp[-1][0]
-        lastY=path_temp[-1][1]
-        for i in range (1,yMax-path_temp[-1][1]-n): #w dol do konca
-            path_temp.append([lastX,lastY+i])
 
-        lastX=path_temp[-1][0]
-        lastY=path_temp[-1][1]
-        for i in range (1,xMax-2*n):                #w lewo do konca
-            path_temp.append([lastX-i,lastY])
-
-        lastX=path_temp[-1][0]
-        lastY=path_temp[-1][1]
-        for i in range (1,yMax-2*n):                #w gore do konca
-            path_temp.append([lastX,lastY-i])
-
-        lastX=path_temp[-1][0]
-        lastY=path_temp[-1][1]
-        if robotID == n_robots-1:                   #ostani bieze wieksze kolko
-            for i in range (1,1+base[0]-n+1):             # w prawo do bazy
-                path_temp.append([lastX+i,lastY])
+        if robotID == 0:
+            tempPath = {'robotID': robotID, 'path':path0}
         else:
-            for i in range (1,1+base[0]-n):             # w prawo do bazy
-                path_temp.append([lastX+i,lastY])
+            tempPath = {'robotID': robotID, 'path':path1}
 
-        lastX=path_temp[-1][0]
-        lastY=path_temp[-1][1]
-        for i in range (1,1+base[1]-n):             # w dol do bazy
-            path_temp.append([lastX,lastY+i])
-
-        if robotID == n_robots-1:
-            path_temp.append([base[0]+1,base[1]+1])
-           # path_temp.append([base[0],base[1]+1]) #from his base one additional step neceesary
-            for z in range(0,base[0]-(base[0]-n_robots)+1):
-                for i in range(1,yMax-base[1]-1):  #czyli od punktu bazowego do samego dolu
-                    path_temp.append([path_temp[-1][0],path_temp[-1][1]+1]) #x sie nie zmienia
-                path_temp.append([path_temp[-1][0]-1,path_temp[-1][1]]) #x o jednen w lewo
-                for i in range(0,yMax-base[1]-2):  #czyli od dolu prawie do bazy
-                    path_temp.append([path_temp[-1][0],path_temp[-1][1]-1])
-            for i in range(0,yMax-path_temp[-1][1]-1):
-                    path_temp.append([path_temp[-1][0],path_temp[-1][1]-1])
-            for i in range(0,base[0]-path_temp[-1][0]):
-                    path_temp.append([path_temp[-1][0]+1,path_temp[-1][1]])
-            for i in range(0,base[1]-path_temp[-1][1]):
-                    path_temp.append([path_temp[-1][0],path_temp[-1][1]+1])
-
-        tempPath = {'robotID': robotID, 'path':path_temp}
         # remember path in robotsPaths dict!
         self.robotsPaths.append(tempPath)
-        return path_temp
+        if robotID == 0:
+            return path0
+        else:
+            return path1
 
 
     def getCoordFromPath(self, robotID, stage):
@@ -185,12 +123,12 @@ class Controller:
             print("R{0} zwalniam: {1} {2}".format(dEvent['robotID'], oldX, oldY))
 
 
-    def defineRobot(self, robotId, robotX0, robotY0, robotPath, robotSpeed):#define how many robots should be created
+    def defineRobot(self, robotId, robotX0, robotY0, robotPath):#define how many robots should be created
         robot = com.Robot()
         robot.id = robotId
         robot.posX = robotX0
         robot.posY = robotY0
-        robot.speed = robotSpeed
+        robot.size = 1
 
         for elem in robotPath:
             stage = robot.path.stage.add()
@@ -210,8 +148,8 @@ class Controller:
 
         # event with data - dictionary!
         dEvent = self.getDataFromEvent(event)
-        print("Receive Obs event ze:")
-        print(dEvent)
+        # print("Receive Obs event ze:")
+        # print(dEvent)
 
         self.freeOldResource(dEvent)
 
@@ -219,8 +157,10 @@ class Controller:
 
 
     def handleEvents(self):
+        print('HiproEvents:*****************************************')
+        print(str(self.highPrioEvents))
 
-        # check if in highPrioEvents list exist not checked event
+        # check if in highPrioEvents list exists not checked event
         if self.allHighPrioEventsChecked() == False:
             dEvent = self.highPrioEvents.pop(0)
 
@@ -248,7 +188,6 @@ class Controller:
             else:
                 # put this resource in highPrioEvents
                 self.highPrioEvents.append(dEvent)
-                # print("highPro: "+str(self.highPrioEvents))
             print("---")
 
 
@@ -262,10 +201,10 @@ class Controller:
             for dEvent in self.highPrioEvents:
                 if ('checked' in dEvent):
                     if dEvent['checked'] == False:
-                        # print("not checked")
+                        print("{0} not checked").format(dEvent['robotID'])
                         return False
-                    # else:
-                    #     print("checked")
+                    else:
+                        print("{0} checked").format(dEvent['robotID'])
 
                 else:
                     print("Error!")
@@ -319,38 +258,36 @@ class Controller:
 
 
 
-    def sendEnvMsg(self, robot_speed):
+    def sendEnvMsg(self):
         # ta wiadmosc wysyalana jest tylko jeden raz
         # wysylamy sciezki kazdego robota na poczatku do symulatora
-
-        global n_robots #total number of robots [will use it in path generation] could be a global?
-        n_robots=7
         print "sending the initialize environment/path message"
         time.sleep(1)
-        self.defineEnv(20,[6,10],[12,10])
-        for n in range(0,n_robots):
-            time.sleep(1)
-            #robot ID xMax yMax robot_base_point
-            self.defineRobot(n,6+n,10, self.generatePath(n,20,20,[6+n,10]), robot_speed)
+        # self.defineEnv(20,20,7,10)
+        self.defineEnv(10,10,5,6)
+        time.sleep(1)
+        self.defineRobot(0,5,5, self.generatePath(0))
+        time.sleep(1)
+        self.defineRobot(1,6,5, self.generatePath(1))
+        time.sleep(1)
+        self.defineRobot(2,6,5, self.generatePath(2))
+        time.sleep(1)
 
-
-
+	 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--speed", type=float, help="robots speed", default=1)
-    args = parser.parse_args()
-
     controller = Controller()
     time.sleep(1)
-    controller.sendEnvMsg(args.speed)
+    controller.sendEnvMsg()
     time.sleep(5)
 
     while True:
+            # print("1")
             if controller.waitForRecvEvent == True:
                 controller.receiveEvents()
-
+            # print("2")
             controller.handleEvents()
-
+            # print("3")
 
 if __name__ == '__main__':
     main()  # This is executed if file is not imported
+

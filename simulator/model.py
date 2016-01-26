@@ -38,6 +38,14 @@ class Robot:
             msg = event.SerializeToString()
             self.socket_pub.send("%d %s" % (self.id, msg))
         else:
+            if self.stage == len(self.path) - 1:
+                print("%d my stage: %d" % (self.id, self.stage))
+                event = com.Event()
+                event.robot = self.id
+                event.stage = self.stage + 1
+                msg = event.SerializeToString()
+                self.socket_pub.send("%d %s" % (self.id, msg))
+
             print("Robot %d ended move" % self.id)
 
     def addMoveCallback(self, callback):
