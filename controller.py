@@ -106,19 +106,20 @@ class Controller:
             path_temp.append([lastX,lastY+i])
 
         if robotID == n_robots-1:
-            path_temp.append(base)
+            path_temp.append([base[0]+1,base[1]+1])
+           # path_temp.append([base[0],base[1]+1]) #from his base one additional step neceesary
             for z in range(0,base[0]-(base[0]-n_robots)+1):
-                for i in range(1,yMax-base[1]):  #czyli od punktu bazowego do samego dolu
+                for i in range(1,yMax-base[1]-1):  #czyli od punktu bazowego do samego dolu
                     path_temp.append([path_temp[-1][0],path_temp[-1][1]+1]) #x sie nie zmienia
-                path_temp.append([path_temp[-1][0]-1,path_temp[-1][1]]) #x sie nie zmienia
-                for i in range(0,yMax-base[1]-1):  #czyli od punktu bazowego do samego dolu
-                    path_temp.append([path_temp[-1][0],path_temp[-1][1]-1]) #x sie nie zmienia
-                for i in range(0,yMax-path_temp[-1][1]):
-                    path_temp.append([path_temp[-1][0],path_temp[-1][1]-1]) #x sie nie zmienia
-                for i in range(0,base[0]-path_temp[-1][0]):
-                    path_temp.append([path_temp[-1][0]+1,path_temp[-1][1]]) #x sie nie zmienia
-                for i in range(0,base[1]-path_temp[-1][1]):
-                    path_temp.append([path_temp[-1][0],path_temp[-1][1]+1]) #x sie nie zmienia
+                path_temp.append([path_temp[-1][0]-1,path_temp[-1][1]]) #x o jednen w lewo
+                for i in range(0,yMax-base[1]-2):  #czyli od dolu prawie do bazy
+                    path_temp.append([path_temp[-1][0],path_temp[-1][1]-1])
+            for i in range(0,yMax-path_temp[-1][1]-1):
+                    path_temp.append([path_temp[-1][0],path_temp[-1][1]-1])
+            for i in range(0,base[0]-path_temp[-1][0]):
+                    path_temp.append([path_temp[-1][0]+1,path_temp[-1][1]])
+            for i in range(0,base[1]-path_temp[-1][1]):
+                    path_temp.append([path_temp[-1][0],path_temp[-1][1]+1])
 
         tempPath = {'robotID': robotID, 'path':path_temp}
         # remember path in robotsPaths dict!
