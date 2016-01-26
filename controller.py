@@ -1,7 +1,7 @@
 import zmq
 import time
 import argparse
-import communication_pb2 as com
+from proto import communication_pb2 as com
 
 
 class Controller:
