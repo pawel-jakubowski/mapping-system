@@ -324,14 +324,22 @@ class Controller:
         # wysylamy sciezki kazdego robota na poczatku do symulatora
 
         global n_robots #total number of robots [will use it in path generation] could be a global?
-        n_robots=7
+        n_robots = 8
         print "sending the initialize environment/path message"
-        time.sleep(1)
-        self.defineEnv(20,[6,10],[12,10])
+        time.sleep(0.025)
+        baseStartPoint = [6,10]
+        baseEndPoint = [13,10]
+        boardSize = 20
+        self.defineEnv(boardSize, baseStartPoint, baseEndPoint)
+
         for n in range(0,n_robots):
-            time.sleep(1)
+            time.sleep(0.025)
             #robot ID xMax yMax robot_base_point
-            self.defineRobot(n,6+n,10, self.generatePath(n,20,20,[6+n,10]), robot_speed)
+            x = baseStartPoint[0]+n
+            y = baseStartPoint[1]
+            print "(%d,%d)"%(x,y)
+            path = self.generatePath(n,boardSize,boardSize,[x,y])
+            self.defineRobot(n, x, y, path, robot_speed)
 
 
 
