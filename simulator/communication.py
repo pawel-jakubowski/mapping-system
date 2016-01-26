@@ -63,7 +63,7 @@ class Communication:
             stage = (s.x, s.y)
             path.append(stage)
         robot = model.Robot(robot_msg.id, robot_msg.posX, robot_msg.posY,
-                            robot_msg.size, self.socket_obs, self.socket_con,
+                            self.socket_obs, self.socket_con,
                             robot_msg.speed, path)
         robot.addMoveCallback(self.moveRobot)
         self.robots.append(robot)

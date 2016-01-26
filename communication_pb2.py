@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='communication.proto',
   package='communication',
-  serialized_pb=_b('\n\x13\x63ommunication.proto\x12\rcommunication\"g\n\x0b\x45nvironment\x12\x0c\n\x04size\x18\x01 \x02(\x05\x12\x12\n\nbaseStartX\x18\x02 \x02(\x05\x12\x12\n\nbaseStartY\x18\x03 \x02(\x05\x12\x10\n\x08\x62\x61seEndX\x18\x04 \x02(\x05\x12\x10\n\x08\x62\x61seEndY\x18\x05 \x02(\x05\"%\n\x05\x45vent\x12\r\n\x05robot\x18\x01 \x02(\x05\x12\r\n\x05stage\x18\x02 \x02(\x05\"^\n\x04Path\x12\r\n\x05robot\x18\x01 \x01(\x05\x12(\n\x05stage\x18\x02 \x03(\x0b\x32\x19.communication.Path.Stage\x1a\x1d\n\x05Stage\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\"r\n\x05Robot\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04posX\x18\x02 \x02(\x05\x12\x0c\n\x04posY\x18\x03 \x02(\x05\x12\x0c\n\x04size\x18\x04 \x02(\x01\x12\x10\n\x05speed\x18\x05 \x01(\x01:\x01\x32\x12!\n\x04path\x18\x06 \x01(\x0b\x32\x13.communication.Path')
+  serialized_pb=_b('\n\x13\x63ommunication.proto\x12\rcommunication\"g\n\x0b\x45nvironment\x12\x0c\n\x04size\x18\x01 \x02(\x05\x12\x12\n\nbaseStartX\x18\x02 \x02(\x05\x12\x12\n\nbaseStartY\x18\x03 \x02(\x05\x12\x10\n\x08\x62\x61seEndX\x18\x04 \x02(\x05\x12\x10\n\x08\x62\x61seEndY\x18\x05 \x02(\x05\"%\n\x05\x45vent\x12\r\n\x05robot\x18\x01 \x02(\x05\x12\r\n\x05stage\x18\x02 \x02(\x05\"^\n\x04Path\x12\r\n\x05robot\x18\x01 \x01(\x05\x12(\n\x05stage\x18\x02 \x03(\x0b\x32\x19.communication.Path.Stage\x1a\x1d\n\x05Stage\x12\t\n\x01x\x18\x01 \x02(\x05\x12\t\n\x01y\x18\x02 \x02(\x05\"d\n\x05Robot\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04posX\x18\x02 \x02(\x05\x12\x0c\n\x04posY\x18\x03 \x02(\x05\x12\x10\n\x05speed\x18\x04 \x01(\x01:\x01\x32\x12!\n\x04path\x18\x06 \x01(\x0b\x32\x13.communication.Path')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -222,21 +222,14 @@ _ROBOT = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='size', full_name='communication.Robot.size', index=3,
-      number=4, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='speed', full_name='communication.Robot.speed', index=4,
-      number=5, type=1, cpp_type=5, label=1,
+      name='speed', full_name='communication.Robot.speed', index=3,
+      number=4, type=1, cpp_type=5, label=1,
       has_default_value=True, default_value=2,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='path', full_name='communication.Robot.path', index=5,
+      name='path', full_name='communication.Robot.path', index=4,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -254,7 +247,7 @@ _ROBOT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=278,
-  serialized_end=392,
+  serialized_end=378,
 )
 
 _PATH_STAGE.containing_type = _PATH

@@ -27,8 +27,7 @@ message Robot {	// robot init msg
     required int32 id = 1;
     required int32 posX = 2; //  init robot pos
     required int32 posY = 3;
-    required double size = 4;
-    optional double speed = 5 [default = 2];
+    optional double speed = 4 [default = 2];
 
     optional Path path = 6;
 }

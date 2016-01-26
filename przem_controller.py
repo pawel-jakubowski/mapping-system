@@ -1,6 +1,6 @@
 import zmq
 import time
-
+import argparse
 import communication_pb2 as com
 
 
@@ -180,12 +180,12 @@ class Controller:
             print("R{0} zwalniam: {1} {2}".format(dEvent['robotID'], oldX, oldY))
 
 
-    def defineRobot(self, robotId, robotX0, robotY0, robotPath):#define how many robots should be created
+    def defineRobot(self, robotId, robotX0, robotY0, robotPath, robotSpeed):#define how many robots should be created
         robot = com.Robot()
         robot.id = robotId
         robot.posX = robotX0
         robot.posY = robotY0
-        robot.size = 1
+        robot.speed = robotSpeed
 
         for elem in robotPath:
             stage = robot.path.stage.add()
@@ -314,7 +314,7 @@ class Controller:
 
 
 
-    def sendEnvMsg(self):
+    def sendEnvMsg(self, robot_speed):
         # ta wiadmosc wysyalana jest tylko jeden raz
         # wysylamy sciezki kazdego robota na poczatku do symulatora
 
@@ -326,14 +326,18 @@ class Controller:
         for n in range(0,n_robots):
             time.sleep(1)
             #robot ID xMax yMax robot_base_point
-            self.defineRobot(n,7+n,10, self.generatePath(n,20,20,[7+n,10]))
+            self.defineRobot(n,7+n,10, self.generatePath(n,20,20,[7+n,10]), robot_speed)
 
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--speed", type=float, help="robots speed", default=1)
+    args = parser.parse_args()
+
     controller = Controller()
     time.sleep(1)
-    controller.sendEnvMsg()
+    controller.sendEnvMsg(args.speed)
     time.sleep(5)
 
     while True:
