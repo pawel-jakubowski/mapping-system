@@ -77,32 +77,36 @@ class Controller:
 
         lastX=path_temp[-1][0]
         lastY=path_temp[-1][1]
-        for i in range (1,(xMax)-path_temp[-1][0]-n):
+        for i in range (1,(xMax)-path_temp[-1][0]-n):  #w prawo do konca
             path_temp.append([lastX+i,lastY])
 
         lastX=path_temp[-1][0]
         lastY=path_temp[-1][1]
-        for i in range (1,yMax-path_temp[-1][1]-n):
+        for i in range (1,yMax-path_temp[-1][1]-n): #w dol do konca
             path_temp.append([lastX,lastY+i])
 
         lastX=path_temp[-1][0]
         lastY=path_temp[-1][1]
-        for i in range (1,xMax-2*n):
+        for i in range (1,xMax-2*n):                #w lewo do konca
             path_temp.append([lastX-i,lastY])
 
         lastX=path_temp[-1][0]
         lastY=path_temp[-1][1]
-        for i in range (1,yMax-2*n):
+        for i in range (1,yMax-2*n):                #w gore do konca
             path_temp.append([lastX,lastY-i])
 
         lastX=path_temp[-1][0]
         lastY=path_temp[-1][1]
-        for i in range (1,1+base[0]-n):
-            path_temp.append([lastX+i,lastY])
+        if robotID == n_robots-1:                   #ostani bieze wieksze kolko
+            for i in range (1,1+base[0]-n+1):             # w prawo do bazy
+                path_temp.append([lastX+i,lastY])
+        else:
+            for i in range (1,1+base[0]-n):             # w prawo do bazy
+                path_temp.append([lastX+i,lastY])
 
         lastX=path_temp[-1][0]
         lastY=path_temp[-1][1]
-        for i in range (1,1+base[1]-n):
+        for i in range (1,1+base[1]-n):             # w dol do bazy
             path_temp.append([lastX,lastY+i])
 
         if robotID == n_robots-1:
